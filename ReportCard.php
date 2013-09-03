@@ -55,6 +55,7 @@ class ReportCard{
 
 	private $effort_schema;
 	private $grade_schema;
+	private $language_id;
 	function __construct($syear="2012", $sid=null, $template_id="2", $teacher_id="209", $teacher_kh_id="209"){
 
 		$this->syear=$syear;
@@ -63,6 +64,8 @@ class ReportCard{
 		$this->teacher_id=$teacher_id;
 		$this->teacher_kh_id=$teacher_kh_id;
 		$this->date = date("d M Y",time());
+		
+		$this->language_id=1; //English
 
 		$dbh = $this->connectELDB();
 		$sdbh =$this->connectOpenSIS();
@@ -217,7 +220,7 @@ class ReportCard{
 				$this->printHeader();
 
 				$topic_id = 0;
-				foreach($dbh->query("SELECT * from template_fields WHERE template_id='".$this->template_id."'AND language_id=1 ORDER BY topic_id") as $row) {
+				foreach($dbh->query("SELECT * from template_fields WHERE template_id='".$this->template_id."'AND language_id='".$this->language_id."' ORDER BY topic_id") as $row) {
 
 					//does this happen? Move on to the right side
 					if($topic_id==$this->HEIGHTLIMIT){
@@ -357,8 +360,11 @@ class ReportCard{
 		$dbh = $this->connectELDB();
 		$template_id = $this->template_id;
 		$sid = $this->sid;
+
+		$alt_lang = 2; //Khmer
+
 		//fetch alt_language text (hard coded for khmer currently)
-		$text_q = $dbh->prepare("SELECT * from template_fields where topic_id='".$row['topic_id']."' and template_id='".$template_id."' and language_id='2'");
+		$text_q = $dbh->prepare("SELECT * from template_fields where topic_id='".$row['topic_id']."' and template_id='".$template_id."' and language_id='".$alt_lang."'");
 		$text_q->execute();
 		$alt_lang=$text_q->fetch();
 

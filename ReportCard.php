@@ -217,7 +217,7 @@ class ReportCard{
 				$this->printHeader();
 
 				$topic_id = 0;
-				foreach($dbh->query("SELECT * from template_fields WHERE template_id='".$this->template_id."' ORDER BY topic_id") as $row) {
+				foreach($dbh->query("SELECT * from template_fields WHERE template_id='".$this->template_id."'AND language_id=1 ORDER BY topic_id") as $row) {
 
 					//does this happen? Move on to the right side
 					if($topic_id==$this->HEIGHTLIMIT){
@@ -357,6 +357,10 @@ class ReportCard{
 		$dbh = $this->connectELDB();
 		$template_id = $this->template_id;
 		$sid = $this->sid;
+		//fetch alt_language text (hard coded for khmer currently)
+		$text_q = $dbh->prepare("SELECT * from template_fields where topic_id='".$row['topic_id']."' and template_id='".$template_id."' and language_id='2'");
+		$text_q->execute();
+		$alt_lang=$text_q->fetch();
 
 		if($row['is_graded']){
 			//pull the grades from the DB
@@ -394,7 +398,7 @@ class ReportCard{
 				}
 
 			}
-			print("<tr><td align=\"right\" class = \"rowtitle\">".$row['text_en']."<br>".$row['text_kh']."</td>
+			print("<tr><td align=\"right\" class = \"rowtitle\">".$row['text']."<br>".$alt_lang['text']."</td>
 
 					<td align = \"center\" class=\"editGrade\" id=\"S1G".$row['topic_id']."\">".$truegrades['S1G']."</td>
 					<td align = \"center\"  class=\"editEffort\" class=\"editGrade\" id=\"S1E".$row['topic_id']."\">".$truegrades['S1E']."</td>
@@ -407,7 +411,7 @@ class ReportCard{
 		}
 		else{
 			print("
-			<tr><td colspan = \"5\" class = \"sectiontitle\">".$row['text_en']."<br>".$row['text_kh']."</td></tr>
+			<tr><td colspan = \"5\" class = \"sectiontitle\">".$row['text']."<br>".$alt_lang['text']."</td></tr>
 			");
 		}
 	}

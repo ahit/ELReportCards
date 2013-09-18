@@ -495,11 +495,31 @@ class ReportCard{
 			</td></tr>
 			<tr><td class = "noborder" align = "center">
 				<table style = "width: 35%; margin-bottom: 7%;" border = "1" align = "center">
-					<tr><td align = "right" style = "width: 50%"><b>Semester</b></td><td align = "center" style = "width:20%">1</td><td align = "center"  style = "width:20%">2</td></tr>
-					<tr><td align = "center" colspan="3" style ="font-size:normal;"><b>Attendance</b></td></tr>
-					<tr><td align = "right"><b>Number of School Days</b></td><td align = "center"><?php print $this->sdays['S1'];?></td><td align = "center"><?php print $this->sdays['S2'];?></td></tr>
-					<tr><td align = "right"><b>Days Absent</b></td><td align = "center"><?php print $this->da['S1'];?></td><td align = "center"><?php print $this->da['S2']; ?></td></tr>
-					<tr><td align = "right"><b>Days Tardy</b></td><td align = "center"><?php print $this->dt['S1'];?></td><td align = "center"><?php print $this->dt['S2'];?></td></tr>
+					<tr>	<td align = "right" style = "width: 60%"><b>Quarter</b></td>
+						<td align = "center" style = "width:10%">1</td>
+						<td align = "center"  style = "width:10%">2</td>
+						<td align = "center"  style = "width:10%">3</td>
+						<td align = "center"  style = "width:10%">4</td>
+					</tr>
+					<tr>	<td align = "center" colspan="5" style ="font-size:normal;"><b>Attendance</b></td></tr>
+					<tr>	<td align = "right"><b>Number of School Days</b></td>
+						<td align = "center"><?php print $this->sdays['Q1'];?></td>
+						<td align = "center"><?php print $this->sdays['Q2'];?></td>
+						<td align = "center"><?php print $this->sdays['Q3'];?></td>
+						<td align = "center"><?php print $this->sdays['Q4'];?></td>
+					</tr>
+					<tr>	<td align = "right"><b>Days Absent</b></td>
+						<td align = "center"><?php print $this->da['Q1'];?></td>
+						<td align = "center"><?php print $this->da['Q2']; ?></td>
+						<td align = "center"><?php print $this->da['Q3'];?></td>
+						<td align = "center"><?php print $this->da['Q4']; ?></td>
+					</tr>
+					<tr>	<td align = "right"><b>Days Tardy</b></td>
+						<td align = "center"><?php print $this->dt['Q1'];?></td>
+						<td align = "center"><?php print $this->dt['Q2'];?></td>
+						<td align = "center"><?php print $this->dt['Q3'];?></td>
+						<td align = "center"><?php print $this->dt['Q4'];?></td>
+					</tr>
 				</table>
 			</td></tr>
 			<tr><td class = "noborder" align = "center">

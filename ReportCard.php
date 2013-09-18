@@ -10,15 +10,12 @@ class ReportCard{
 	private $teacher_name;
 	private $teacher_kh_name;
 
-	//total school days by semester
-	private $sdays1;
-	private $sdays2;
+	//total school days by marking period (array keyed with marking period short name)
+	private $sdays;
 
-	//days absent/tardy by semester
-	private $da1;
-	private $da2;
-	private $dt1;
-	private $dt2;
+	//days absent/tardy by marking period (array keyed with marking period short name)
+	private $da;
+	private $dt;
 
 	private $sname; //Full student name (Surname, Firstname)
 	private $grade; //normal name of grade, pulled from template_id (e.g. "Grade 2")
@@ -35,11 +32,6 @@ class ReportCard{
 	private $HEIGHTLIMIT = 21;
 	private $COLUMNS = 4;
 	private $KEY = 1;
-
-	//attendance data
-	private $sdays = array();
-	private $da = array();
-	private $dt = array();
 
 	//grading schema - if these are updated, need to redo headers and key
 	private $schema_3 = Array(
@@ -147,7 +139,8 @@ class ReportCard{
 		foreach($mp_result as $val){
 			$sdate = $val['start_date'];
 			$edate = $val['end_date'];
-			
+			$short_name = $val['short_name'];
+
 			//get total number of days per marking period from attendance calendar (all the way to the end of the year)
 			$q = $sdbh->prepare("SELECT COUNT(*) as count from attendance_calendar where syear=$syear AND school_id=$school_id AND school_date>='"
 					.$sdate."' AND school_date<='".$edate."'");
@@ -183,34 +176,25 @@ class ReportCard{
 			
 		
 			//load them up
-			$sdays[$i] = $res['count'];
-			$da[$i] = $dares['count'];
-			$dt[$i] = $dtres['count'];
-			$du[$i] = $dures['count'];
+			$sdays[$short_name] = $res['count'];
+
+			//days absent are the total days - days present - days tardy (that is: all attendance codes that aren't 'present' or 'late')
+			$da[$short_name] = $res['count'] - $dares['count'] - $dtres['count'] - $dures['count'];
+			if($da[$short_name]<0) $da[$short_name]=0;
+
+			$dt[$short_name] = $dtres['count'];
+
+			//not strictly necessary			
+			$du[$short_name] = $dures['count'];
 			
-			$i++;
 		}
 
-		$this->sdays1 = $sdays['1'];
-		$this->sdays2 = $sdays['2'];
+		//hand the arrays off
+		$this->sdays = $sdays;
+		$this->dt = $dt;
+		$this->da = $da;
 
-		//tardies are tardies!
-		$this->dt1 = $dt['1'];
-		$this->dt2 = $dt['2'];
-		
-		//If we're not at the end of a marking period, we don't know about certain days - so we give them the benefit of the doubt
-		$unknownS1 = $du['1'];
-		$unknownS2 = $du['2'];
-		
-		//days absent are the total days - days present - days tardy (that is: all attendance codes that aren't 'present' or 'late')
-		$this->da1 = $sdays['1'] - $da['1'] - $this->dt1 - $unknownS1;
-		$this->da2 = $sdays['2'] - $da['2'] - $this->dt2 - $unknownS2;
 
-		//if absents or tardies are negative, set them to zero.
-		if($this->da1 < 0) $this->da1 = 0;
-		if($this->da2 < 0) $this->da2 = 0;
-		if($this->dt1 < 0) $this->dt1 = 0;
-		if($this->dt2 < 0) $this->dt2 = 0;
 	}
 
 	/*
@@ -513,9 +497,9 @@ class ReportCard{
 				<table style = "width: 35%; margin-bottom: 7%;" border = "1" align = "center">
 					<tr><td align = "right" style = "width: 50%"><b>Semester</b></td><td align = "center" style = "width:20%">1</td><td align = "center"  style = "width:20%">2</td></tr>
 					<tr><td align = "center" colspan="3" style ="font-size:normal;"><b>Attendance</b></td></tr>
-					<tr><td align = "right"><b>Number of School Days</b></td><td align = "center"><?php print $this->sdays1;?></td><td align = "center"><?php print $this->sdays2;?></td></tr>
-					<tr><td align = "right"><b>Days Absent</b></td><td align = "center"><?php print $this->da1;?></td><td align = "center"><?php print $this->da2; ?></td></tr>
-					<tr><td align = "right"><b>Days Tardy</b></td><td align = "center"><?php print $this->dt1;?></td><td align = "center"><?php print $this->dt2;?></td></tr>
+					<tr><td align = "right"><b>Number of School Days</b></td><td align = "center"><?php print $this->sdays['S1'];?></td><td align = "center"><?php print $this->sdays['S2'];?></td></tr>
+					<tr><td align = "right"><b>Days Absent</b></td><td align = "center"><?php print $this->da['S1'];?></td><td align = "center"><?php print $this->da['S2']; ?></td></tr>
+					<tr><td align = "right"><b>Days Tardy</b></td><td align = "center"><?php print $this->dt['S1'];?></td><td align = "center"><?php print $this->dt['S2'];?></td></tr>
 				</table>
 			</td></tr>
 			<tr><td class = "noborder" align = "center">

@@ -97,7 +97,7 @@ td{
 #nav{
 	font-size: small;
 	color:white;
-	background-color: rgb(32,96,32);
+	background-color: rgb(27,158,224);
 	padding: 10px;
 	
 	position: fixed;
@@ -116,20 +116,20 @@ td{
 }
 #nav h1 a{
 	font-size: small;
-	color: yellow;
+	color: white;
 	text-decoration: underline;
 }
 .content {display:none;}
 .content table{
-	color: yellow;
+	color: white;
 	font-size: normal;
 	width: 95%;
 	border: none;
 }
 .content tr{
 	font-size: normal;
-	border: solid green 1px;
-	background-color: rgb(32,96,32);
+	border: solid blue 1px;
+	background-color: rgb(27,158,224);
 }
 .content td{
 	font-size: normal;

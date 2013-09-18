@@ -111,7 +111,7 @@
 		$data = intval($rp->hasData($tempsid));
 			if      ($data>=75){ $color = "white";}
 			else if ($data>=50 && $data<75){ $color = "orange";}
-			else if ($data<50) { $color = "rgb(255,128,128)";}
+			else if ($data<50) { $color = "rgb(128,55,55)";}
 			else 				{ $color = "brown";}
 		
 		//by default, select the first student in the list

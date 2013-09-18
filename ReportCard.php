@@ -418,20 +418,20 @@ class ReportCard{
 				}
 
 			}
-			print("<tr><td align=\"right\" class = \"rowtitle\">".$row['text']."<br>".$alt_lang['text']."</td>
+			print("<tr><td align=\"right\" width=80% class = \"rowtitle\">".$row['text']."<br>".$alt_lang['text']."</td>
 
-					<td align = \"center\" class=\"editGrade\" id=\"S1G".$row['topic_id']."\">".$truegrades['S1G']."</td>
-					<td align = \"center\"  class=\"editEffort\" class=\"editGrade\" id=\"S1E".$row['topic_id']."\">".$truegrades['S1E']."</td>
-					<td align = \"center\"  class=\"editGrade\"class=\"editGrade\" id=\"S2G".$row['topic_id']."\">".$truegrades['S2G']."</td>"
+					<td align = \"center\"  width=5% class=\"editGrade\" id=\"S1G".$row['topic_id']."\">".$truegrades['S1G']."</td>
+					<td align = \"center\"  width=5% class=\"editEffort\" class=\"editGrade\" id=\"S1E".$row['topic_id']."\">".$truegrades['S1E']."</td>
+					<td align = \"center\"  width=5% class=\"editGrade\"class=\"editGrade\" id=\"S2G".$row['topic_id']."\">".$truegrades['S2G']."</td>"
 			);
 			if($this->COLUMNS == 4)
-				print("<td align = \"center\" class=\"editEffort\"class=\"editGrade\" id=\"S2E".$row['topic_id']."\">".$truegrades['S2E']."</td>"
+				print("<td align = \"center\" width=5% class=\"editEffort\"class=\"editGrade\" id=\"S2E".$row['topic_id']."\">".$truegrades['S2E']."</td>"
 			);
 
 		}
 		else{
 			print("
-			<tr><td colspan = \"5\" class = \"sectiontitle\">".$row['text']."<br>".$alt_lang['text']."</td></tr>
+			<tr><td colspan = \"5\" class = \"sectiontitle\" width=80%>".$row['text']."<br>".$alt_lang['text']."</td></tr>
 			");
 		}
 	}

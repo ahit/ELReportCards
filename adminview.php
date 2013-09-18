@@ -47,7 +47,7 @@
 	<head><meta charset="UTF-8" />
 		<link rel = "stylesheet" type="text/css" href="style_web.css" media="screen"/>
 		<link rel = "stylesheet" type="text/css" href="style_print.css" media ="print"/>
-		<script src="js/jquery-1.8.2.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
 		<script src="js/simple-expand.min.js" type="text/javascript" charset="utf-8"></script>
 		
 		<script type="text/javascript">

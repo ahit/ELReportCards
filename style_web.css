@@ -1,9 +1,8 @@
 @font-face {
-  font-family: 'Andika';
-  src: local('Andika'), url('fonts/Andika-R.ttf') format('truetype');
+  font-family: sans-serif;
   }
 body{
-  font-family: 'Andika';
+  font-family: sans-serif;
 }
 table{
 	background-color: white;

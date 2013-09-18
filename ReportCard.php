@@ -52,6 +52,27 @@ class ReportCard{
 	private $schema_4g = Array(
 			'4'=>'4','3'=>'3','2'=>'2','1'=>'1','NA'=>'NA','.'=>'UG', 'selected'=>'4'
 			);
+	private $schema_logosg = Array(
+			'A+'=>'A+',
+			'A'=>'A',
+			'A-'=>'A-',
+			'B+'=>'B+',
+			'B'=>'B',
+			'B-'=>'B-',
+			'C+'=>'C+',
+			'C'=>'C',
+			'C-'=>'C-',
+			'D+'=>'D+',
+			'D'=>'D',
+			'D-'=>'D-',
+			'F'=>'F',
+			'NA'=>'NA',
+			'.'=>'UG', 
+			'selected'=>'A'
+			);
+	private $schema_logose = Array(
+			'E'=>'E','G'=>'G','S'=>'S','N'=>'N','U'=>'U','NA'=>'NA','.'=>'UG', 'selected'=>'E'
+			);
 
 	private $effort_schema;
 	private $grade_schema;
@@ -107,8 +128,8 @@ class ReportCard{
 		$this->KEY = $template['key'];
 
 		if($this->COLUMNS == 4){
-			$this->effort_schema = $this->schema_4e;
-			$this->grade_schema = $this->schema_4g;
+			$this->effort_schema = $this->schema_logose;
+			$this->grade_schema = $this->schema_logosg;
 		}
 		elseif($this->COLUMNS == 3){
 			$this->effort_schema = $this->schema_3;
@@ -312,11 +333,12 @@ class ReportCard{
 					<td style = "border-style:none;">
 						<table style = "width:90%;">
 							<tr class = "sectiontitlecenter"><td colspan="2"  style = "width:100%; font-size:xsmall">Achievement</td></tr>
-							<tr><td style="width:3%" align="center">4</td><td style = "width:50%; font-size: xsmall;">Consistently Above Standard<br> លើស្តង់ដា</td></tr>
-							<tr><td style="width:3%" align="center">3</td><td style = "width:50%; font-size: xsmall;">Meeting Standards<br>ស្មើរស្តង់ដា</td></tr>
-							<tr><td style="width:3%" align="center">2</td><td style = "width:50%; font-size: xsmall;">Making Progress<br>ដំណើរការទៅដល់ស្តង់ដា</td></tr>
-							<tr><td style="width:3%" align="center">1</td><td style = "width:50%; font-size: xsmall;">Making Minimum Progress<br>អប្បបរមាក្នុងការដល់ស្តង់ដា</td></tr>
-							<tr><td style="width:3%" align="center">NA</td><td style = "width:50%; font-size: xsmall;">Not Applicable<br>មិនមាននៅឡើយ</td></tr>
+							<tr><td style="width:3%" align="center">A</td><td style = "width:50%; font-size: xsmall;">Outstanding Achievement. The pupil has mastered the objectives in the subject area, shows initiative, applies knowledge gained to new situations, and accepts responsibility for learning.</tr>
+							<tr><td style="width:3%" align="center">B</td><td style = "width:50%; font-size: xsmall;">Above Average (High) Achievement. The pupil has mastered most of the objectives in the subject area, is above average in initiative, application of knowledge, and accepting responsibility for learning.</td></tr>
+							<tr><td style="width:3%" align="center">C</td><td style = "width:50%; font-size: xsmall;">Satisfactory Achievement. The pupil has mastered the basic objectives. With direction and stimulation by the teacher the student is progressing in initiative, application of knowledge, and accepting responsibility for learning.</td></tr>
+							<tr><td style="width:3%" align="center">D</td><td style = "width:50%; font-size: xsmall;">Below Average (Needs Improvement in) Achievement. The pupil has mastered few of the basic objectives in the subject area. Needs time, help and practice to improve.</td></tr>
+							<tr><td style="width:3%" align="center">F</td><td style = "width:50%; font-size: xsmall;">Unsatisfactory Achievement. The pupil has not mastered the basic objectives in the subject area. Significant time, help and practice required to improve and pass.</td></tr>
+							<tr><td style="width:3%" align="center">I</td><td style = "width:50%; font-size: xsmall;">Insufficient Data has been collected to give a proper assesment.</td></tr>
 						</table>
 					</td>
 
@@ -325,12 +347,12 @@ class ReportCard{
 					<td style = "border-style:none">
 						<table style = "width:90%;">
 							<tr class = "sectiontitlecenter"><td colspan="2" style = "width:100%; font-size:xsmall">Effort</td></tr>
-							<tr><td style="width:3%" align="center">E</td><td style = "width:50%; font-size: xsmall;">Excellent<br>ល្អណាស់</td></tr>
-							<tr><td style="width:3%" align="center">G</td><td style = "width:50%; font-size: xsmall;">Good<br>ល្អ</td></tr>
-							<tr><td style="width:3%" align="center">S</td><td style = "width:50%; font-size: xsmall;">Satisfactory<br>មធ្យម</td></tr>
-							<tr><td style="width:3%" align="center">N</td><td style = "width:50%; font-size: xsmall;">Needs Improvement<br>ខ្សោយ</td></tr>
-							<tr><td style="width:3%" align="center">U</td><td style = "width:50%; font-size: xsmall;">Unsatisfactory<br>ខ្សោយណាស់</td></tr>
-							<tr><td style="width:3%" align="center">NA</td><td style = "width:50%; font-size: xsmall;">Not Applicable<br>មិនមាននៅឡើយ</td></tr>
+							<tr><td style="width:3%" align="center">E</td><td style = "width:50%; font-size: xsmall;">Excellent</td></tr>
+							<tr><td style="width:3%" align="center">G</td><td style = "width:50%; font-size: xsmall;">Good</td></tr>
+							<tr><td style="width:3%" align="center">S</td><td style = "width:50%; font-size: xsmall;">Satisfactory</td></tr>
+							<tr><td style="width:3%" align="center">N</td><td style = "width:50%; font-size: xsmall;">Needs Improvement</td></tr>
+							<tr><td style="width:3%" align="center">U</td><td style = "width:50%; font-size: xsmall;">Unsatisfactory</td></tr>
+							<tr><td style="width:3%" align="center">NA</td><td style = "width:50%; font-size: xsmall;">Not Applicable</td></tr>
 						</table>
 					</td>
 				</tr>
@@ -348,8 +370,8 @@ class ReportCard{
 		}
 		else if($this->COLUMNS ==4){
 			?>
-			<tr><td class="sectiontitle" rowspan="2"><b>Grading Period</b>   </td><td  class = "sectiontitlecenter" colspan="2">Semester 1</td><td  class = "sectiontitlecenter" colspan="2">Semester 2</td></tr>
-			<tr><td class = "sectiontitlecenter">Grade</td><td class = "sectiontitlecenter">Effort</td><td class = "sectiontitlecenter">Grade</td><td class = "sectiontitlecenter">Effort</td></tr>
+			<tr><td class="sectiontitle"><b>Grading Period</b></td>
+			<td class = "sectiontitlecenter">Q1</td><td class = "sectiontitlecenter">Q2</td><td class = "sectiontitlecenter">Q3</td><td class = "sectiontitlecenter">Q4</td></tr>
 			<?php
 		}
 	}
@@ -445,13 +467,13 @@ class ReportCard{
 		print("
 				<table id = \"comments\">
 					<tr><td class = \"commentSectionTitle\"><b>GENERAL COMMENTS</b></td></tr>
-						<tr><td class = \"commentSectionTitle\">S1 - English		</td></tr>
+						<tr><td class = \"commentSectionTitle\">Q1</td></tr>
 						<tr><td class=\"commentblock\"  id = \"C1\">".$truecomments['1']."</td></tr>
-						<tr><td class = \"commentSectionTitle\">S1 - Khmer			</td></tr>
+						<tr><td class = \"commentSectionTitle\">Q2</td></tr>
 						<tr><td class=\"commentblock\" id = \"C2\">".$truecomments['2']."</td></tr>
-						<tr><td class = \"commentSectionTitle\">S2 - English		</td></tr>
+						<tr><td class = \"commentSectionTitle\">Q3</td></tr>
 						<tr><td class=\"commentblock\" id = \"C3\">".$truecomments['3']."</td></tr>
-						<tr><td class = \"commentSectionTitle\">S2 - Khmer			</td></tr>
+						<tr><td class = \"commentSectionTitle\">Q4</td></tr>
 						<tr><td class=\"commentblock\" id = \"C4\">".$truecomments['4']."</td></tr>
 				</table>
 			");
@@ -462,13 +484,13 @@ class ReportCard{
 	 function printTitle(){
 		?>
 		<table id = \"title\">
-			<tr><td class = "noborder" style = "height: 10%; text-align:center;"><img src = "img/AHISLogo.png" style = "height: 3.5cm;"></td></tr>
-			<tr><td class = "noborder" align ="center"><b style = "font-size: 15pt;">ASIAN HOPE INTERNATIONAL SCHOOL</b></td></tr>
+			<tr><td class = "noborder" style = "height: 10%; text-align:center;"><img src = "img/LISLogo.png" style = "height: 3.5cm;"></td></tr>
+			<tr><td class = "noborder" align ="center"><b style = "font-size: 15pt;">LOGOS INTERNATIONAL SCHOOL</b></td></tr>
 			<tr><td class = "noborder" align ="center"><b style = "font-size: 12pt;">a ministry of Asian Hope Cambodia</b></td></tr>
 			<tr><td class = "noborder" align ="center"><b style = "font-size: 12pt;">PHNOM PENH, KINGDOM OF CAMBODIA</b></td></tr>
-			<tr><td class = "noborder" align ="center"><b style = "font-size: 15pt;">2012-2013 REPORT CARD</b></td></tr>
-			<tr><td class = "noborder" align ="center"><b style = "font-size: 12pt;">PH: 023.885.170</b></td></tr>
-			<tr><td class = "noborder" align ="center"><b style = "font-size: 12pt;">ASIANHOPESCHOOL.ORG</b></td></tr>
+			<tr><td class = "noborder" align ="center"><b style = "font-size: 15pt;">2013-2014 REPORT CARD</b></td></tr>
+			<tr><td class = "noborder" align ="center"><b style = "font-size: 12pt;">PH: XXX.XXX.XXXX</b></td></tr>
+			<tr><td class = "noborder" align ="center"><b style = "font-size: 12pt;">LOGOSCAMBODIA.ORG</b></td></tr>
 			<tr><td class = "noborder" style = "height: 5%;"></td></tr>
 			<tr><td class = "noborder" align = "center">
 				<table style = "width: 70%; border: none; margin-bottom: 5%; margin-top: 5%">

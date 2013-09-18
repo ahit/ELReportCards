@@ -1,5 +1,7 @@
 <?php
 //connect to DB
+$school_id = 1;
+$syear = 2013;
 
 include("data.php");
 $dsn = $DatabaseType.":host=".$DatabaseServer.";dbname=".$ELDatabaseName;
@@ -20,7 +22,7 @@ foreach($templates_result as $val){
 
 
 //grab staff names for list
-$query = $sdbh->prepare("SELECT staff_id, first_name, last_name from staff WHERE syear = 2012 and current_school_id=2 and profile ='teacher' and is_disable IS NULL and profile_id=2
+$query = $sdbh->prepare("SELECT staff_id, first_name, last_name from staff WHERE syear = $syear and current_school_id=$school_id and profile ='teacher' and is_disable IS NULL and profile_id=2
 		order by last_name");
 $query->execute();
 $teachers_result = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -32,7 +34,7 @@ foreach($teachers_result as $val){
 	$teachers['id'] = $val['staff_id'];
 }
 
-$query = $sdbh->prepare("SELECT staff_id, first_name, last_name from staff WHERE syear = 2012 and current_school_id=2 and profile_id ='5' and is_disable IS NULL
+$query = $sdbh->prepare("SELECT staff_id, first_name, last_name from staff WHERE syear = $syear and current_school_id=$school_id and profile_id ='5' and is_disable IS NULL
 		order by last_name");
 $query->execute();
 $teachers_kh_result = $query->fetchAll(PDO::FETCH_ASSOC);

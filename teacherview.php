@@ -4,7 +4,7 @@
 	
 	//pull in the default values if we don't already have them
 	if(!isset($_REQUEST['syear']))
-		$syear = 2012;
+		$syear = 2013;
 	else
 		$syear = $_REQUEST['syear'];
 	

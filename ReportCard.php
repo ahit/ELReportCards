@@ -3,6 +3,7 @@ class ReportCard{
 	//Things we need to construct a ReportCard
 	private $syear;
 	private $sid;
+	private $school_id;
 	private $template_id;
 	private $teacher_id;
 	private $teacher_kh_id;
@@ -77,8 +78,9 @@ class ReportCard{
 	private $effort_schema;
 	private $grade_schema;
 	private $language_id;
-	function __construct($syear="2012", $sid=null, $template_id="2", $teacher_id="209", $teacher_kh_id="209"){
+	function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="209", $teacher_kh_id="209",$school_id="1"){
 
+		$this->school_id = $school_id;
 		$this->syear=$syear;
 		$this->sid=$sid;
 		$this->template_id=$template_id;
@@ -136,7 +138,7 @@ class ReportCard{
 			$this->grade_schema = $this->schema_3;
 		}
 		//where do s1 and s2 begin? (will have to re-evaluate for a Logos version where we go by quarter(?))
-		$query = $sdbh->prepare("SELECT * FROM marking_periods where school_id=2 AND syear = $syear AND parent_id >0");
+		$query = $sdbh->prepare("SELECT * FROM marking_periods where school_id=$school_id AND syear = $syear AND parent_id >0");
 		$query->execute();
 		$mp_result = $query->fetchAll(PDO::FETCH_ASSOC);
 		$i = 1;
@@ -147,7 +149,7 @@ class ReportCard{
 			$edate = $val['end_date'];
 			
 			//get total number of days per marking period from attendance calendar (all the way to the end of the year)
-			$q = $sdbh->prepare("SELECT COUNT(*) as count from attendance_calendar where syear=$syear AND school_id=2 AND school_date>='"
+			$q = $sdbh->prepare("SELECT COUNT(*) as count from attendance_calendar where syear=$syear AND school_id=$school_id AND school_date>='"
 					.$sdate."' AND school_date<='".$edate."'");
 			$q->execute();
 			$res = $q->fetch();
@@ -155,7 +157,7 @@ class ReportCard{
 			//get total number of days present for selected student by
 			$qda = $sdbh->prepare("
 					SELECT count(attendance_period.school_date) as count from attendance_period,
-					(SELECT id from attendance_codes where syear=$syear AND school_id =2 AND title LIKE \"present\") as present_id
+					(SELECT id from attendance_codes where syear=$syear AND school_id =$school_id AND title LIKE \"present\") as present_id
 					WHERE
 					attendance_period.attendance_code = present_id.id AND student_id = $sid AND school_date>='"
 					.$sdate."' AND school_date<='".$edate."'");
@@ -165,7 +167,7 @@ class ReportCard{
 			//get total number of days tardy
 			$qdt = $sdbh->prepare("
 					SELECT count(attendance_period.school_date) as count from attendance_period,
-					(SELECT id from attendance_codes where syear=$syear AND school_id =2 AND title LIKE \"late\") as late_id
+					(SELECT id from attendance_codes where syear=$syear AND school_id =$school_id AND title LIKE \"late\") as late_id
 					WHERE
 					attendance_period.attendance_code = late_id.id AND student_id = $sid AND school_date>='"
 					.$sdate."' AND school_date<='".$edate."'");
@@ -173,7 +175,7 @@ class ReportCard{
 			$dtres = $qdt->fetch();
 			
 			//get the total number of unknown days
-			$q = $sdbh->prepare("SELECT COUNT(*) as count from attendance_calendar where syear=$syear AND school_id=2 AND school_date>='"
+			$q = $sdbh->prepare("SELECT COUNT(*) as count from attendance_calendar where syear=$syear AND school_id=$school_id AND school_date>='"
 					.date("Y-m-d",strtotime("Tomorrow"))."' AND school_date<='".$edate."'");
 		
 			$q->execute();
@@ -203,6 +205,12 @@ class ReportCard{
 		//days absent are the total days - days present - days tardy (that is: all attendance codes that aren't 'present' or 'late')
 		$this->da1 = $sdays['1'] - $da['1'] - $this->dt1 - $unknownS1;
 		$this->da2 = $sdays['2'] - $da['2'] - $this->dt2 - $unknownS2;
+
+		//if absents or tardies are negative, set them to zero.
+		if($this->da1 < 0) $this->da1 = 0;
+		if($this->da2 < 0) $this->da2 = 0;
+		if($this->dt1 < 0) $this->dt1 = 0;
+		if($this->dt2 < 0) $this->dt2 = 0;
 	}
 
 	/*
@@ -286,7 +294,7 @@ class ReportCard{
 				 schedule.course_period_id as course_period_id
 				 FROM students, schedule
 				 WHERE
-				 schedule.student_id = students.student_id AND schedule.syear = 2012 AND schedule.school_id=2
+				 schedule.student_id = students.student_id AND schedule.syear = $this->syear AND schedule.school_id=$this->school_id
 				 AND students.is_disable IS NULL AND schedule.end_date IS NULL)
 				 as enrolled_students,
 

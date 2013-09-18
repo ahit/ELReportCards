@@ -111,13 +111,13 @@
 		$data = intval($rp->hasData($tempsid));
 			if      ($data>=75){ $color = "white";}
 			else if ($data>=50 && $data<75){ $color = "orange";}
-			else if ($data<50) { $color = "rgb(128,55,55)";}
+			else if ($data<50) { $color = "rgb(100,55,55)";}
 			else 				{ $color = "brown";}
 		
 		//by default, select the first student in the list
 		if($sid == 0) $sid = $tempsid;
 			
-		print("<tr><td><a href = \"teacherview.php?sid=$student.$tempsid\" style =\"color:$color;\">$student</a></td>");
+		print("<tr><td><a href = \"teacherview.php?sid=$student.$tempsid\">$student</a></td>");
 		print("<td style = \"color: $color\">".$data."%</a></td>");
 		
 		$count++;

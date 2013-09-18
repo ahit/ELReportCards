@@ -46,6 +46,7 @@ class ReportCard{
 			'4'=>'4','3'=>'3','2'=>'2','1'=>'1','NA'=>'NA','.'=>'UG', 'selected'=>'4'
 			);
 	private $schema_logosg = Array(
+			'...'=>'---- Achievement ----',
 			'A+'=>'A+',
 			'A'=>'A',
 			'A-'=>'A-',
@@ -59,6 +60,13 @@ class ReportCard{
 			'D'=>'D',
 			'D-'=>'D-',
 			'F'=>'F',
+			'NA'=>'NA',
+			'.'=>'UG', 
+			'..'=>'---- Effort ----',
+			'E'=>'E',
+			'G'=>'G',
+			'S'=>'S',
+			'N'=>'N','U'=>'U',
 			'NA'=>'NA',
 			'.'=>'UG', 
 			'selected'=>'A'
@@ -237,8 +245,21 @@ class ReportCard{
 
 					//does this happen? Move on to the right side
 					if($topic_id==$this->HEIGHTLIMIT){
-						print("</table></td>"); //these breaks move the left table up in line with the right, may have to change
-						print("<td class = \"right\"><table class = \"outline\">");
+						print("</table><br>"); //these breaks move the left table up in line with the right, may have to change
+						?>
+						<table>
+							<tr class = "sectiontitlecenter"><td colspan="2"  style = "width:100%; font-size:xsmall">Achievement</td></tr>
+							<tr><td style="width:3%" align="center">A</td><td style = "width:50%; font-size: xsmall;">Outstanding Achievement. The pupil has mastered the objectives in the subject area, shows initiative, applies knowledge gained to new situations, and accepts responsibility for learning.</tr>
+							<tr><td style="width:3%" align="center">B</td><td style = "width:50%; font-size: xsmall;">Above Average (High) Achievement. The pupil has mastered most of the objectives in the subject area, is above average in initiative, application of knowledge, and accepting responsibility for learning.</td></tr>
+							<tr><td style="width:3%" align="center">C</td><td style = "width:50%; font-size: xsmall;">Satisfactory Achievement. The pupil has mastered the basic objectives. With direction and stimulation by the teacher the student is progressing in initiative, application of knowledge, and accepting responsibility for learning.</td></tr>
+							<tr><td style="width:3%" align="center">D</td><td style = "width:50%; font-size: xsmall;">Below Average (Needs Improvement in) Achievement. The pupil has mastered few of the basic objectives in the subject area. Needs time, help and practice to improve.</td></tr>
+							<tr><td style="width:3%" align="center">F</td><td style = "width:50%; font-size: xsmall;">Unsatisfactory Achievement. The pupil has not mastered the basic objectives in the subject area. Significant time, help and practice required to improve and pass.</td></tr>
+							<tr><td style="width:3%" align="center">I</td><td style = "width:50%; font-size: xsmall;">Insufficient Data has been collected to give a proper assesment.</td></tr>
+						</table>
+
+
+						<?php
+						print("</td><td class = \"right\"><table class = \"outline\">");
 						$this->printHeader();
 					}
 
@@ -321,23 +342,9 @@ class ReportCard{
 	?>
 			<br/>
 			<table style = "border-style:none;">
-				<tr style = "border-style:none;">
-					<td style = "border-style:none;">
-						<table style = "width:90%;">
-							<tr class = "sectiontitlecenter"><td colspan="2"  style = "width:100%; font-size:xsmall">Achievement</td></tr>
-							<tr><td style="width:3%" align="center">A</td><td style = "width:50%; font-size: xsmall;">Outstanding Achievement. The pupil has mastered the objectives in the subject area, shows initiative, applies knowledge gained to new situations, and accepts responsibility for learning.</tr>
-							<tr><td style="width:3%" align="center">B</td><td style = "width:50%; font-size: xsmall;">Above Average (High) Achievement. The pupil has mastered most of the objectives in the subject area, is above average in initiative, application of knowledge, and accepting responsibility for learning.</td></tr>
-							<tr><td style="width:3%" align="center">C</td><td style = "width:50%; font-size: xsmall;">Satisfactory Achievement. The pupil has mastered the basic objectives. With direction and stimulation by the teacher the student is progressing in initiative, application of knowledge, and accepting responsibility for learning.</td></tr>
-							<tr><td style="width:3%" align="center">D</td><td style = "width:50%; font-size: xsmall;">Below Average (Needs Improvement in) Achievement. The pupil has mastered few of the basic objectives in the subject area. Needs time, help and practice to improve.</td></tr>
-							<tr><td style="width:3%" align="center">F</td><td style = "width:50%; font-size: xsmall;">Unsatisfactory Achievement. The pupil has not mastered the basic objectives in the subject area. Significant time, help and practice required to improve and pass.</td></tr>
-							<tr><td style="width:3%" align="center">I</td><td style = "width:50%; font-size: xsmall;">Insufficient Data has been collected to give a proper assesment.</td></tr>
-						</table>
-					</td>
-
-					<td style = "width:10%; border-style: none;"></td>
-
-					<td style = "border-style:none">
-						<table style = "width:90%;">
+				
+					
+						<table style = "width:100%; position: relative;">
 							<tr class = "sectiontitlecenter"><td colspan="2" style = "width:100%; font-size:xsmall">Effort</td></tr>
 							<tr><td style="width:3%" align="center">E</td><td style = "width:50%; font-size: xsmall;">Excellent</td></tr>
 							<tr><td style="width:3%" align="center">G</td><td style = "width:50%; font-size: xsmall;">Good</td></tr>
@@ -346,7 +353,7 @@ class ReportCard{
 							<tr><td style="width:3%" align="center">U</td><td style = "width:50%; font-size: xsmall;">Unsatisfactory</td></tr>
 							<tr><td style="width:3%" align="center">NA</td><td style = "width:50%; font-size: xsmall;">Not Applicable</td></tr>
 						</table>
-					</td>
+					
 				</tr>
 			</table>
 		<?php

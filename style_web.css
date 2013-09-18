@@ -95,14 +95,20 @@ td{
 	font-size:xsmall;
 }
 #nav{
-	font-size: small;
+	font-size: large;
 	color:white;
-	background-color: rgb(27,158,224);
+	background-color: #136e9c;
 	padding: 10px;
 	
-	position: fixed;
+	position: absolute;
 	width: 20%;
 	left: 80%;
+}
+#nav td{
+	font-size: 10pt;
+	}
+#nav tr{
+	border: solid #105e85 1px;
 }
 #nav a{
 	color: white;
@@ -128,8 +134,8 @@ td{
 }
 .content tr{
 	font-size: normal;
-	border: solid blue 1px;
-	background-color: rgb(27,158,224);
+	border: solid black 1px;
+	background-color: #136e9c;
 }
 .content td{
 	font-size: normal;

@@ -31,7 +31,7 @@ table.nooutline{
 .commentSectionTitle{
 	font-weight: bold;
 	background-color: rgb(240,240,240);
-	font-size: xsmall;
+	font-size: x-small;
 	text-align: center;
 	height: 7mm;
 }
@@ -51,19 +51,19 @@ td{
 .sectiontitle{
 	font-weight: bold;
 	background-color: rgb(240,240,240);
-	font-size: xsmall;
+	font-size: x-small;
 	text-align: right;
 }
 .sectiontitlecenter{
 	font-weight: bold;
 	background-color: rgb(240,240,240);
-	font-size: xsmall;
+	font-size: x-small;
 	text-align: center;
 }
 .sectiontitlecenterfixed{
 	font-weight: bold;
 	background-color: rgb(240,240,240);
-	font-size: xsmall;
+	font-size: x-small;
 	text-align: center;
 	width: 1.5cm;
 }
@@ -78,7 +78,7 @@ td{
 	font-weight: bold;
 }
 .editEffort{
-	font-weight: bold;	
+	font-weight: bold;
 }
 
 .commentblock{
@@ -92,14 +92,14 @@ td{
 	border: none;
 }
 .rowtitle{
-	font-size:xsmall;
+	font-size:x-small;
 }
 #nav{
 	font-size: large;
 	color:white;
 	background-color: #136e9c;
 	padding: 10px;
-	
+
 	position: absolute;
 	width: 20%;
 	left: 80%;
@@ -115,7 +115,7 @@ td{
 	text-decoration: none;
 }
 #nav a:hover{
-	text-decoration: underline;	
+	text-decoration: underline;
 }
 #nav h1{
 		margin: 1px;
@@ -128,17 +128,17 @@ td{
 .content {display:none;}
 .content table{
 	color: white;
-	font-size: normal;
+	font-size: medium;
 	width: 95%;
 	border: none;
 }
 .content tr{
-	font-size: normal;
+	font-size: medium;
 	border: solid black 1px;
 	background-color: #136e9c;
 }
 .content td{
-	font-size: normal;
+	font-size: medium;
 	border: none;
 
 }

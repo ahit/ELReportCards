@@ -35,7 +35,7 @@ table.nooutline{
 .commentSectionTitle{
 	font-weight: bold;
 	background-color: rgb(240,240,240);
-	font-size: xsmall;
+	font-size: x-small;
 	text-align: center;
 	height: 7mm;
 }
@@ -55,19 +55,19 @@ td{
 .sectiontitle{
 	font-weight: bold;
 	background-color: rgb(240,240,240);
-	font-size: xsmall;
+	font-size: x-small;
 	text-align: right;
 }
 .sectiontitlecenter{
 	font-weight: bold;
 	background-color: rgb(240,240,240);
-	font-size: xsmall;
+	font-size: x-small;
 	text-align: center;
 }
 .sectiontitlecenterfixed{
 	font-weight: bold;
 	background-color: rgb(240,240,240);
-	font-size: xsmall;
+	font-size: x-small;
 	text-align: center;
 	width: 1.5cm;
 }
@@ -82,7 +82,7 @@ td{
 	font-weight: bold;
 }
 .editEffort{
-	font-weight: bold;	
+	font-weight: bold;
 }
 
 .commentblock{
@@ -96,7 +96,7 @@ td{
 	border: none;
 }
 .rowtitle{
-	font-size:xsmall;
+	font-size:x-small;
 }
 #nav{
 	display:none;

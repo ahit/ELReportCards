@@ -61,33 +61,33 @@ class ReportCard{
 			'D-'=>'D-',
 			'F'=>'F',
 			'NA'=>'NA',
-			'.'=>'UG', 
+			'.'=>'UG',
 			'..'=>'---- Effort ----',
 			'E'=>'E',
 			'G'=>'G',
 			'S'=>'S',
 			'N'=>'N','U'=>'U',
 			'NA'=>'NA',
-			'.'=>'UG', 
+			'.'=>'UG',
 			'selected'=>'A'
 			);
 	private $schema_logose = Array(
 			'E'=>'E','G'=>'G','S'=>'S','N'=>'N','U'=>'U','NA'=>'NA','.'=>'UG', 'selected'=>'E'
 			);
+    private $effort_schema;
+	  private $grade_schema;
+	  private $language_id;
 
-	private $effort_schema;
-	private $grade_schema;
-	private $language_id;
-	function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="209", $teacher_kh_id="209",$school_id="1"){
+function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="209", $teacher_kh_id="209",$school_id="1"){
 
-		$this->school_id = $school_id;
+    $this->school_id = $school_id;
 		$this->syear=$syear;
 		$this->sid=$sid;
 		$this->template_id=$template_id;
 		$this->teacher_id=$teacher_id;
 		$this->teacher_kh_id=$teacher_kh_id;
 		$this->date = date("d M Y",time());
-		
+
 		$this->language_id=1; //English
 
 		$dbh = $this->connectELDB();
@@ -142,7 +142,7 @@ class ReportCard{
 		$query->execute();
 		$mp_result = $query->fetchAll(PDO::FETCH_ASSOC);
 		$i = 1;
-		
+
 		//this runs once per marking period -
 		foreach($mp_result as $val){
 			$sdate = $val['start_date'];
@@ -150,15 +150,16 @@ class ReportCard{
 			$short_name = $val['short_name'];
 
 			//get total number of days per marking period from attendance calendar (all the way to the end of the year)
-			$q = $sdbh->prepare("SELECT COUNT(*) as count from attendance_calendar where syear=$syear AND school_id=$school_id AND school_date>='"
-					.$sdate."' AND school_date<='".$edate."'");
+			$q = $sdbh->prepare("SELECT COUNT(*) as count from attendance_calendar where syear=$syear AND school_id=$school_id 
+				AND school_date>='".$sdate."' AND school_date<='".$edate."'");
 			$q->execute();
 			$res = $q->fetch();
-			
+
 			//get total number of days present for selected student by
 			$qda = $sdbh->prepare("
 					SELECT count(attendance_period.school_date) as count from attendance_period,
-					(SELECT id from attendance_codes where syear=$syear AND school_id =$school_id AND title LIKE \"present\") as present_id
+					(SELECT id from attendance_codes where syear=$syear AND school_id =$school_id AND title LIKE \"present\") 
+					as present_id
 					WHERE
 					attendance_period.attendance_code = present_id.id AND student_id = $sid AND school_date>='"
 					.$sdate."' AND school_date<='".$edate."'");
@@ -168,33 +169,37 @@ class ReportCard{
 			//get total number of days tardy
 			$qdt = $sdbh->prepare("
 					SELECT count(attendance_period.school_date) as count from attendance_period,
-					(SELECT id from attendance_codes where syear=$syear AND school_id =$school_id AND title LIKE \"late\") as late_id
+					(SELECT id from attendance_codes where syear=$syear AND school_id =$school_id AND title LIKE \"late\") 
+					as late_id
 					WHERE
 					attendance_period.attendance_code = late_id.id AND student_id = $sid AND school_date>='"
 					.$sdate."' AND school_date<='".$edate."'");
 			$qdt->execute();
 			$dtres = $qdt->fetch();
-			
+
 			//get the total number of unknown days
-			$q = $sdbh->prepare("SELECT COUNT(*) as count from attendance_calendar where syear=$syear AND school_id=$school_id AND school_date>='"
-					.date("Y-m-d",strtotime("Tomorrow"))."' AND school_date<='".$edate."'");
-		
+			$q = $sdbh->prepare("SELECT COUNT(*) as count from attendance_calendar where syear=$syear AND school_id=$school_id 
+				AND school_date>='".date("Y-m-d",strtotime("Tomorrow"))."' AND school_date<='".$edate."'");
+
 			$q->execute();
 			$dures = $q->fetch();
-			
-		
+
+
 			//load them up
 			$sdays[$short_name] = $res['count'];
 
-			//days absent are the total days - days present - days tardy (that is: all attendance codes that aren't 'present' or 'late')
+			/* 
+			 * days absent are the total days - days present - days tardy 
+			 * (that is: all attendance codes that aren't 'present' or 'late') 
+			 */
 			$da[$short_name] = $res['count'] - $dares['count'] - $dtres['count'] - $dures['count'];
 			if($da[$short_name]<0) $da[$short_name]=0;
 
 			$dt[$short_name] = $dtres['count'];
 
-			//not strictly necessary			
+			//not strictly necessary
 			$du[$short_name] = $dures['count'];
-			
+
 		}
 
 		//hand the arrays off
@@ -225,9 +230,9 @@ class ReportCard{
 		print("</td>");
 		print("</tr></table>");
 		?>
-		<!-- --------------------------------------------Break Here-------------------------------------------------------------------------------------- -->
+		<!-- --------------------------------------------Break Here------------------------------------------------------ -->
 		<div style ="page-break-before: always;"></div>
-		<!-- --------------------------------------------Break Here-------------------------------------------------------------------------------------- -->
+		<!-- --------------------------------------------Break Here------------------------------------------------------ -->
 
 			<?php
 
@@ -246,6 +251,8 @@ class ReportCard{
 					//does this happen? Move on to the right side
 					if($topic_id==$this->HEIGHTLIMIT){
 						print("</table><br>"); //these breaks move the left table up in line with the right, may have to change
+
+						//this is Faith's fault! We'll have to figure out a way to store these in the DB and pull them over.
 						?>
 						<table>
 							<tr class = "sectiontitlecenter"><td colspan="2"  style = "width:100%; font-size:xsmall">Achievement</td></tr>
@@ -342,8 +349,8 @@ class ReportCard{
 	?>
 			<br/>
 			<table style = "border-style:none;">
-				
-					
+
+
 						<table style = "width:100%; position: relative;">
 							<tr class = "sectiontitlecenter"><td colspan="2" style = "width:100%; font-size:xsmall">Effort</td></tr>
 							<tr><td style="width:3%" align="center">E</td><td style = "width:50%; font-size: xsmall;">Excellent</td></tr>
@@ -353,7 +360,7 @@ class ReportCard{
 							<tr><td style="width:3%" align="center">U</td><td style = "width:50%; font-size: xsmall;">Unsatisfactory</td></tr>
 							<tr><td style="width:3%" align="center">NA</td><td style = "width:50%; font-size: xsmall;">Not Applicable</td></tr>
 						</table>
-					
+
 				</tr>
 			</table>
 		<?php

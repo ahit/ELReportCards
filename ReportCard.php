@@ -253,19 +253,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 						print("</table><br>"); //these breaks move the left table up in line with the right, may have to change
 
 						//this is Faith's fault! We'll have to figure out a way to store these in the DB and pull them over.
-						?>
-						<table>
-							<tr class = "sectiontitlecenter"><td colspan="2"  style = "width:100%; font-size:xsmall">Achievement</td></tr>
-							<tr><td style="width:3%" align="center">A</td><td style = "width:50%; font-size: xsmall;">Outstanding Achievement. The pupil has mastered the objectives in the subject area, shows initiative, applies knowledge gained to new situations, and accepts responsibility for learning.</tr>
-							<tr><td style="width:3%" align="center">B</td><td style = "width:50%; font-size: xsmall;">Above Average (High) Achievement. The pupil has mastered most of the objectives in the subject area, is above average in initiative, application of knowledge, and accepting responsibility for learning.</td></tr>
-							<tr><td style="width:3%" align="center">C</td><td style = "width:50%; font-size: xsmall;">Satisfactory Achievement. The pupil has mastered the basic objectives. With direction and stimulation by the teacher the student is progressing in initiative, application of knowledge, and accepting responsibility for learning.</td></tr>
-							<tr><td style="width:3%" align="center">D</td><td style = "width:50%; font-size: xsmall;">Below Average (Needs Improvement in) Achievement. The pupil has mastered few of the basic objectives in the subject area. Needs time, help and practice to improve.</td></tr>
-							<tr><td style="width:3%" align="center">F</td><td style = "width:50%; font-size: xsmall;">Unsatisfactory Achievement. The pupil has not mastered the basic objectives in the subject area. Significant time, help and practice required to improve and pass.</td></tr>
-							<tr><td style="width:3%" align="center">I</td><td style = "width:50%; font-size: xsmall;">Insufficient Data has been collected to give a proper assesment.</td></tr>
-						</table>
-
-
-						<?php
+						$this->printGradeTable(53);						
 						print("</td><td class = \"right\"><table class = \"outline\">");
 						$this->printHeader();
 					}
@@ -274,8 +262,8 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 					$topic_id++;
 				}
 
-				print("</table>");
-				$this->printKey();
+				print("</table><br/>");
+				$this->printGradeTable(54);
 				print("</td>");
 			print("</tr></table>");
 	}
@@ -602,6 +590,36 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 
 		$percent = ($count/$total)*100;
 		return $percent;
+
+	}
+
+	 function printGradeTable($schema_id){
+		$dbh = $this->connectOpenSIS();
+		$q = $dbh->prepare("SELECT * FROM report_card_grades WHERE grade_scale_id=$schema_id");
+		$q->execute();
+		$res = $q->fetchAll();
+
+		$tq = $dbh->prepare("SELECT title FROM report_card_grade_scales WHERE id=$schema_id");
+		$tq->execute();
+		$title = $tq->fetch();
+		$title = $title['title'];
+		//begin the table and print the title
+		?>
+			<table style = "width:100%; position: relative;">
+				<tr class = "sectiontitlecenter">
+					<td colspan="2" style = "width:100%; font-size:xsmall"><?php print $title?></td>
+				</tr>
+		<?php
+		foreach($res as $row){
+			//$row['title'] $row['comment']
+			?>
+				<tr><td style="width:3%" align="center"><?php print($row['title']);?></td>
+					<td style = "width:50%; font-size: xsmall;"><?php print($row['comment']);?></td>
+				</tr>
+			<?php
+		}
+
+	?>		</table><?php
 
 	}
 	//these are terrible.

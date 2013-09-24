@@ -1,83 +1,15 @@
 @page{
     size: 297mm 210mm;
-    margin: 1.5cm .25cm .25cm .25cm;
+    margin: .25cm .25cm .25cm .25cm;
 }
 @font-face {
   font-family: sans-serif;
   }
 body{
   font-family: sans-serif;
-}
-table{
-	background-color: white;
-	border-collapse: collapse;
-	border: none;
-	width: 150mm;
-}
-table.outline{
-	border: solid black 1px;
-	margin:0 0 0 0px;
-}
-table.nooutline{
-	border: none;
-	margin:0 0 0 0px;
-}
-#title{
-	border: none;
-	margin:0 0 0 0px;
-	height: 195mm;
-}
-#comments{
-	border: solid black 1px;
-	margin:0 0 0 0px;
-	height: 190mm;
-}
-.commentSectionTitle{
-	font-weight: bold;
-	background-color: rgb(240,240,240);
-	font-size: x-small;
-	text-align: center;
-	height: 7mm;
-}
-td{
-	border: solid black 1px;
-	padding: .05cm;
-	font-size: .25cm;
-}
-.left{
-	border: none;
-	padding-right: .5cm;
-}
-.right{
-	border: none;
-	padding-left: 1cm;
-}
-.sectiontitle{
-	font-weight: bold;
-	background-color: rgb(240,240,240);
-	font-size: x-small;
-	text-align: right;
-}
-.sectiontitlecenter{
-	font-weight: bold;
-	background-color: rgb(240,240,240);
-	font-size: x-small;
-	text-align: center;
-}
-.sectiontitlecenterfixed{
-	font-weight: bold;
-	background-color: rgb(240,240,240);
-	font-size: x-small;
-	text-align: center;
-	width: 1.5cm;
+  text-size: small;
 }
 
-.false{
-	color: rgb(220,220,220);
-}
-.true{
-	color: green;
-}
 .editGrade{
 	font-weight: bold;
 }
@@ -85,19 +17,226 @@ td{
 	font-weight: bold;
 }
 
+#nav{
+  display: none;
+}
+
+.content {display:none;}
+.content table{
+	color: white;
+	font-size: medium;
+	width: 95%;
+	border: none;
+}
+.content tr{
+	font-size: medium;
+	border: solid black 1px;
+	background-color: #136e9c;
+}
+.content td{
+	font-size: medium;
+	border: none;
+
+}
+
+
+#A4{
+	width:297mm;
+	height:210mm;
+
+	display:-webkit-box;
+  -webkit-box-orient:horizontal;
+  -webkit-box-align:center;
+  -webkit-box-pack:center;
+
+	page-break-after: always;
+
+
+}
+#A5{
+	padding: 5mm;
+	width:148mm;
+	height:210mm;
+
+	display:-webkit-box;
+ -webkit-box-orient:vertical;
+
+
+}
+.left{
+	-webkit-box-align:left;
+  -webkit-box-pack:left;
+  text-align:left;
+}
+
+.right{
+	-webkit-box-align:right;
+  -webkit-box-pack:right;
+  text-align:right;
+}
+
+.center{
+	-webkit-box-align:center;
+  -webkit-box-pack:center;
+}
+.logo{
+	width: 100%;
+	margin: 0px;
+
+	display:-webkit-box;
+	-webkit-box-pack:center;
+	-webkit-box-align:center;
+	-webkit-box-orient:vertical;
+
+}
+.school_title{
+	width: 100%;
+	margin: 0px;
+
+	font-size: xx-large;
+
+	display:-webkit-box;
+	-webkit-box-pack:center;
+	-webkit-box-align:center;
+	-webkit-box-orient:vertical;
+}
+.subtitle{
+	width: 100%;
+	margin: 0px;
+
+	font-size: x-large;
+
+	display:-webkit-box;
+	-webkit-box-pack:center;
+	-webkit-box-align:center;
+	-webkit-box-orient:vertical;
+
+}
+.location{
+	width: 100%;
+	margin: 0px;
+
+	font-size: x-large;
+
+	display:-webkit-box;
+	-webkit-box-pack:center;
+	-webkit-box-align:center;
+	-webkit-box-orient:vertical;
+
+}
+
+.doc_title{
+	width: 100%;
+
+	margin: 0px;
+
+	font-size: x-large;
+
+	display:-webkit-box;
+	-webkit-box-pack:center;
+	-webkit-box-align:center;
+	-webkit-box-orient:vertical;
+
+}
+.phone_number{
+	width: 100%;
+	margin: 0px;
+
+	font-size: x-large;
+
+	display:-webkit-box;
+	-webkit-box-pack:center;
+	-webkit-box-align:center;
+	-webkit-box-orient:vertical;
+
+}
+.website{
+	width: 100%;
+	margin: 0px;
+
+	font-size: large;
+
+	display:-webkit-box;
+	-webkit-box-pack:center;
+	-webkit-box-align:center;
+	-webkit-box-orient:vertical;
+
+}
+
+.comment_title{
+	width: 100%;
+	margin: 0px;
+
+	background-color: rgb(196,196,196);
+	border:1px solid black;
+	display:-webkit-box;
+	-webkit-box-pack:center;
+	-webkit-box-align:center;
+	-webkit-box-orient:vertical;
+
+
+
+}
+
 .commentblock{
+	width: 100%;
+	height: 20%;
+	margin: 0px;
+
+	border:1px solid black;
+	display:-webkit-box;
+	-webkit-box-pack:center;
+	-webkit-box-align:left-top;
+	-webkit-box-orient:vertical;
+
+  font-size: x-small;
+
+
+}
+table{
+	border-collapse: collapse;
+	margin: 6mm 0mm 0mm 6mm;
+}
+.border{
+	border:1px solid black;
+}
+td.right{
+	text-align: right;
+}
+td.left{
 	text-align: left;
-	height: 3.5cm;
 }
-.noborder{
-	border: none;
+
+.sectiontitle{
+	font-weight: bold;
+	background-color: rgb(240,240,240);
+	font-size: small;
+	text-align: right;
 }
-.student{
-	border: none;
+.sectiontitlecenter{
+	font-weight: bold;
+	background-color: rgb(240,240,240);
+	font-size: small;
+	text-align: center;
+}
+.sectiontitlecenterfixed{
+	font-weight: bold;
+	background-color: rgb(240,240,240);
+	font-size: small;
+	text-align: center;
+	width: 1.5cm;
+}
+.editGrade{
+	font-weight: bold;
+  font-size: small;
+}
+.editEffort{
+	font-weight: bold;
+  font-size: small;
 }
 .rowtitle{
-	font-size:x-small;
+	font-size:small;
 }
-#nav{
-	display:none;
+.row{
+	font-size:x-small;
 }

@@ -10,6 +10,15 @@ class ReportCard{
 	private $teacher_name;
 	private $teacher_kh_name;
 
+  //using $school_id we'll pull the following data
+  private $logo="img/LISLogo.png";
+  private $school_title="Logos International School";
+  private $subtitle="a ministry of Asian Hope";
+  private $location="Phnom Penh, Kingdom of Cambodia";
+  private $doctitle="2013-2014 Report Card"; //use $syear to make this
+  private $phone_number="XXX-XXX-XXXX";
+  private $website="logoscambodia.org";
+
 	//total school days by marking period (array keyed with marking period short name)
 	private $sdays;
 
@@ -150,7 +159,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 			$short_name = $val['short_name'];
 
 			//get total number of days per marking period from attendance calendar (all the way to the end of the year)
-			$q = $sdbh->prepare("SELECT COUNT(*) as count from attendance_calendar where syear=$syear AND school_id=$school_id 
+			$q = $sdbh->prepare("SELECT COUNT(*) as count from attendance_calendar where syear=$syear AND school_id=$school_id
 				AND school_date>='".$sdate."' AND school_date<='".$edate."'");
 			$q->execute();
 			$res = $q->fetch();
@@ -158,7 +167,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 			//get total number of days present for selected student by
 			$qda = $sdbh->prepare("
 					SELECT count(attendance_period.school_date) as count from attendance_period,
-					(SELECT id from attendance_codes where syear=$syear AND school_id =$school_id AND title LIKE \"present\") 
+					(SELECT id from attendance_codes where syear=$syear AND school_id =$school_id AND title LIKE \"present\")
 					as present_id
 					WHERE
 					attendance_period.attendance_code = present_id.id AND student_id = $sid AND school_date>='"
@@ -169,7 +178,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 			//get total number of days tardy
 			$qdt = $sdbh->prepare("
 					SELECT count(attendance_period.school_date) as count from attendance_period,
-					(SELECT id from attendance_codes where syear=$syear AND school_id =$school_id AND title LIKE \"late\") 
+					(SELECT id from attendance_codes where syear=$syear AND school_id =$school_id AND title LIKE \"late\")
 					as late_id
 					WHERE
 					attendance_period.attendance_code = late_id.id AND student_id = $sid AND school_date>='"
@@ -178,7 +187,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 			$dtres = $qdt->fetch();
 
 			//get the total number of unknown days
-			$q = $sdbh->prepare("SELECT COUNT(*) as count from attendance_calendar where syear=$syear AND school_id=$school_id 
+			$q = $sdbh->prepare("SELECT COUNT(*) as count from attendance_calendar where syear=$syear AND school_id=$school_id
 				AND school_date>='".date("Y-m-d",strtotime("Tomorrow"))."' AND school_date<='".$edate."'");
 
 			$q->execute();
@@ -188,9 +197,9 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 			//load them up
 			$sdays[$short_name] = $res['count'];
 
-			/* 
-			 * days absent are the total days - days present - days tardy 
-			 * (that is: all attendance codes that aren't 'present' or 'late') 
+			/*
+			 * days absent are the total days - days present - days tardy
+			 * (that is: all attendance codes that aren't 'present' or 'late')
 			 */
 			$da[$short_name] = $res['count'] - $dares['count'] - $dtres['count'] - $dures['count'];
 			if($da[$short_name]<0) $da[$short_name]=0;
@@ -217,31 +226,21 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 		$dbh = $this->connectELDB();
 		$sdbh = $this->connectOpenSIS();
 
-		print("<table style = \"width: 90%; margin-left: auto; margin-right: auto;\"><tr>");
-
-		//Print the comments on the left hand side
-		print("<td class = \"left\">");
-		$this->printComments();
-		print("</td>");
-
-		//Print the title on the right hand side
-		print("<td class = \"right\">");
-		$this->printTitle();
-		print("</td>");
-		print("</tr></table>");
-		?>
+	  ?>
+    <div id="A4">
+      <div id="A5" class="center"><?php
+        //Print the comments on the left hand side
+        $this->printComments(); ?>
+      </div>
+      <div id="A5" class="center"><?php
+	      $this->printTitle(); ?>
+      </div>
+     </div>
 		<!-- --------------------------------------------Break Here------------------------------------------------------ -->
-		<div style ="page-break-before: always;"></div>
-		<!-- --------------------------------------------Break Here------------------------------------------------------ -->
-
-			<?php
-
-			print("<table style = \"width: 90%; margin-left: auto; margin-right: auto;\"><tr>");
-			//left page grades
-			print("<td class = \"left\">");
-
-
-				print("<table class = \"outline\">");
+     <div id="A4">
+       <div id="A5" class="left">
+    <?php
+				print("<table border=1 style=\"width:100%;margin:0px;\">");
 
 				$this->printHeader();
 
@@ -250,11 +249,11 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 
 					//does this happen? Move on to the right side
 					if($topic_id==$this->HEIGHTLIMIT){
-						print("</table><br>"); //these breaks move the left table up in line with the right, may have to change
+						print("</table>"); //these breaks move the left table up in line with the right, may have to change
 
 						//this is Faith's fault! We'll have to figure out a way to store these in the DB and pull them over.
-						$this->printGradeTable(53);						
-						print("</td><td class = \"right\"><table class = \"outline\">");
+						$this->printGradeTable(53);
+						print("</div><div id=\"A5\" class=\"right\"><table border=1 style=\"width:100%;margin:0px;\">");
 						$this->printHeader();
 					}
 
@@ -262,10 +261,10 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 					$topic_id++;
 				}
 
-				print("</table><br/>");
+				print("</table>");
 				$this->printGradeTable(54);
-				print("</td>");
-			print("</tr></table>");
+			print("</div></div>");
+
 	}
 
 
@@ -331,29 +330,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 	function getEffortSchema(){
 		return str_replace("\"","'",json_encode($this->effort_schema));
 	}
-		//prints the grading key (self contained)
-	function printKey(){
-		if(strcmp($this->KEY,0)){
-	?>
-			<br/>
-			<table style = "border-style:none;">
 
-
-						<table style = "width:100%; position: relative;">
-							<tr class = "sectiontitlecenter"><td colspan="2" style = "width:100%; font-size:xsmall">Effort</td></tr>
-							<tr><td style="width:3%" align="center">E</td><td style = "width:50%; font-size: xsmall;">Excellent</td></tr>
-							<tr><td style="width:3%" align="center">G</td><td style = "width:50%; font-size: xsmall;">Good</td></tr>
-							<tr><td style="width:3%" align="center">S</td><td style = "width:50%; font-size: xsmall;">Satisfactory</td></tr>
-							<tr><td style="width:3%" align="center">N</td><td style = "width:50%; font-size: xsmall;">Needs Improvement</td></tr>
-							<tr><td style="width:3%" align="center">U</td><td style = "width:50%; font-size: xsmall;">Unsatisfactory</td></tr>
-							<tr><td style="width:3%" align="center">NA</td><td style = "width:50%; font-size: xsmall;">Not Applicable</td></tr>
-						</table>
-
-				</tr>
-			</table>
-		<?php
-		}
-	}
 
 	//prints the grading header (effort/grade/semester and so on) - expects an open table
 	function printHeader(){
@@ -377,7 +354,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 		$template_id = $this->template_id;
 		$sid = $this->sid;
 
-		$alt_lang = 2; //Khmer
+		$alt_lang = 0; //2 is Khmer, 0 is no alt_lang
 
 		//fetch alt_language text (hard coded for khmer currently)
 		$text_q = $dbh->prepare("SELECT * from template_fields where topic_id='".$row['topic_id']."' and template_id='".$template_id."' and language_id='".$alt_lang."'");
@@ -458,50 +435,55 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 		foreach($comments as $comment){
 			$truecomments[$comment['comment_id']] = $comment['comment'];
 		}
-		print("
-				<table id = \"comments\">
-					<tr><td class = \"commentSectionTitle\"><b>GENERAL COMMENTS</b></td></tr>
-						<tr><td class = \"commentSectionTitle\">Q1</td></tr>
-						<tr><td class=\"commentblock\"  id = \"C1\">".$truecomments['1']."</td></tr>
-						<tr><td class = \"commentSectionTitle\">Q2</td></tr>
-						<tr><td class=\"commentblock\" id = \"C2\">".$truecomments['2']."</td></tr>
-						<tr><td class = \"commentSectionTitle\">Q3</td></tr>
-						<tr><td class=\"commentblock\" id = \"C3\">".$truecomments['3']."</td></tr>
-						<tr><td class = \"commentSectionTitle\">Q4</td></tr>
-						<tr><td class=\"commentblock\" id = \"C4\">".$truecomments['4']."</td></tr>
-				</table>
-			");
+
+    ?>
+      <p class="comment_title">General Comments</p>
+      <p class="comment_title" >Q1</p>
+      <div class="commentblock" id="C1"><?php print $truecomments['1'];?></div>
+      <p class="comment_title">Q2</p>
+      <div class="commentblock" id="C2"><?php print $truecomments['2'];?></div>
+      <p class="comment_title">Q2</p>
+      <div class="commentblock" id="C3"><?php print $truecomments['3'];?></div>
+      <p class="comment_title">Q2</p>
+      <div class="commentblock" id="C4"><?php print $truecomments['4'];?></div>
+
+    <?php
 
 	}
 
 	// prints all the important stuff on the front page of the report card (self contained)
 	 function printTitle(){
 		?>
-		<table id = \"title\">
-			<tr><td class = "noborder" style = "height: 10%; text-align:center;"><img src = "img/LISLogo.png" style = "height: 3.5cm;"></td></tr>
-			<tr><td class = "noborder" align ="center"><b style = "font-size: 15pt;">LOGOS INTERNATIONAL SCHOOL</b></td></tr>
-			<tr><td class = "noborder" align ="center"><b style = "font-size: 12pt;">a ministry of Asian Hope Cambodia</b></td></tr>
-			<tr><td class = "noborder" align ="center"><b style = "font-size: 12pt;">PHNOM PENH, KINGDOM OF CAMBODIA</b></td></tr>
-			<tr><td class = "noborder" align ="center"><b style = "font-size: 15pt;">2013-2014 REPORT CARD</b></td></tr>
-			<tr><td class = "noborder" align ="center"><b style = "font-size: 12pt;">PH: XXX.XXX.XXXX</b></td></tr>
-			<tr><td class = "noborder" align ="center"><b style = "font-size: 12pt;">LOGOSCAMBODIA.ORG</b></td></tr>
-			<tr><td class = "noborder" style = "height: 5%;"></td></tr>
-			<tr><td class = "noborder" align = "center">
-				<table style = "width: 70%; border: none; margin-bottom: 5%; margin-top: 5%">
-					<tr><td class = "noborder"><b>Student</b></td><td class = "student" id = "sid" align = "right"><?php print $this->sname;?></td></tr>
-					<tr><td class = "noborder"><b>Grade</b></td><td class = "noborder" align = "right"><?php print $this->grade;?></td></tr>
-					<tr><td class = "noborder"><b>Classroom Teacher</b></td><td class = "noborder" align = "right"><?php print $this->teacher_name;?></td></tr>
-                    <?php if(!is_null($this->teacher_kh_name)){?>	<tr><td class = "noborder"><b>Khmer Teacher</b></td><td class = "noborder" align = "right"><?php print $this->teacher_kh_name;?></td></tr><?php }?>
-					<tr><td class = "noborder"><b>Date</b></td><td class = "noborder" align = "right"><?php print $this->date; ?></td></tr>
-				</table>
-			</td></tr>
-			<tr><td class = "noborder" align = "center">
-				<table style = "width: 35%; margin-bottom: 7%;" border = "1" align = "center">
+
+      <p class="logo"><img style = "height:3.5cm" src = "<?php print $this->logo;?>"></p>
+      <p class="school_title"><?php print $this->school_title;?></p>
+      <p class="subtitle"><?php print $this->subtitle;?></p>
+      <p class="location"><?php print $this->location;?></p>
+      <p class="doc_title"><?php print $this->doctitle;?></p>
+      <p class="phone_number"><?php print $this->phone_number;?></p>
+      <p class="website"><?php print $this->website;?></p>
+
+      <table>
+			<tr><td><b>Student</b></td><td class="right"><?php print $this->sname;?></td></tr>
+			<tr><td><b>Grade</b></td><td class="right"><?php print $this->grade;?></td></tr>
+			<tr><td><b>Classroom Teacher</b></td><td class="right"><?php print $this->teacher_name;?></td></tr>
+
+      <?php
+        if(!is_null($this->teacher_kh_name)){
+          ?>
+            <tr><td><b>Khmer Teacher</b></td><td class = "right"><?php print $this->teacher_kh_name;?></td></tr><?php
+        } ?>
+
+	    <tr><td><b>Date</b></td><td class="right"><?php print $this->date; ?></td></tr>
+		  </table>
+
+
+		<table border=1>
 					<tr>	<td align = "right" style = "width: 60%"><b>Quarter</b></td>
-						<td align = "center" style = "width:10%">1</td>
-						<td align = "center"  style = "width:10%">2</td>
-						<td align = "center"  style = "width:10%">3</td>
-						<td align = "center"  style = "width:10%">4</td>
+                <td align = "center" style = "width:10%">1</td>
+                <td align = "center"  style = "width:10%">2</td>
+                <td align = "center"  style = "width:10%">3</td>
+                <td align = "center"  style = "width:10%">4</td>
 					</tr>
 					<tr>	<td align = "center" colspan="5" style ="font-size:normal;"><b>Attendance</b></td></tr>
 					<tr>	<td align = "right"><b>Number of School Days</b></td>
@@ -523,15 +505,17 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 						<td align = "center"><?php print $this->dt['Q4'];?></td>
 					</tr>
 				</table>
-			</td></tr>
-			<tr><td class = "noborder" align = "center">
-				<table style = "width: 100%;" border = "0">
-					<tr><td class = "noborder" style = "height: 5%;" align = "left"><b>Classroom Teacher's Signature</b></td><td class = "noborder" align = "center">_____________________</td></tr>
-                    <?php if(!is_null($this->teacher_kh_name)){?><tr><td class = "noborder" style = "height: 5%;" align = "left"><b>Khmer Teacher's Signature</b></td><td class = "noborder" align = "center">_____________________</td></tr><?php }?>
-					<tr><td class = "noborder" style = "height: 5%;" align = "left"><b>Principal's Signature</b></td><td class = "noborder" align = "center">_____________________</td></tr>
-				</table>
-			</td></tr>
+
+        <table>
+			<tr><td><b>Classroom Teacher's Signature</b></td>	<td class="right">&nbsp;&nbsp;___________________________</td></tr>
+
+      <?php if(!is_null($this->teacher_kh_name)){
+        ?><tr><td><b>Khmer Teacher's Signature</b></td><td class = "right">_____________________</td></tr><?php
+            }
+      ?>
+			<tr><td><b>Principal's Signature</b></td>			<td class="right">&nbsp;&nbsp;___________________________</td></tr>
 		</table>
+
 		<?php
 	}
 
@@ -593,6 +577,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 
 	}
 
+	//prints out the grades, comments and title of a given ID in report_card_grades
 	 function printGradeTable($schema_id){
 		$dbh = $this->connectOpenSIS();
 		$q = $dbh->prepare("SELECT * FROM report_card_grades WHERE grade_scale_id=$schema_id");
@@ -605,16 +590,16 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 		$title = $title['title'];
 		//begin the table and print the title
 		?>
-			<table style = "position: relative;">
+			<table border=1 style="width:90%;">
 				<tr class = "sectiontitlecenter">
-					<td colspan="2" style = "width:100%; font-size:xsmall"><?php print $title?></td>
+					<td colspan="2"><?php print $title?></td>
 				</tr>
 		<?php
 		foreach($res as $row){
 			//$row['title'] $row['comment']
 			?>
-				<tr><td style="width:3%" align="center"><?php print($row['title']);?></td>
-					<td style = "width:50%; font-size: xsmall;"><?php print($row['comment']);?></td>
+				<tr class = "row"><td style="width:3%" align="center"><?php print($row['title']);?></td>
+					<td><?php print($row['comment']);?></td>
 				</tr>
 			<?php
 		}

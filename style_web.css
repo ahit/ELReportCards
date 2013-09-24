@@ -6,13 +6,6 @@ body{
   text-size: small;
 }
 
-.editGrade{
-	font-weight: bold;
-}
-.editEffort{
-	font-weight: bold;
-}
-
 #nav{
 	font-size: large;
 	color:white;
@@ -22,6 +15,11 @@ body{
 	position: absolute;
 	width: 20%;
 	left: 80%;
+}
+
+#nav table{
+	border-collapse: collapse;
+	margin: 0px;
 }
 #nav td{
 	font-size: 10pt;
@@ -218,7 +216,7 @@ body{
 }
 table{
 	border-collapse: collapse;
-		margin: 6mm 0mm 0mm 6mm;
+	margin: 6mm 0mm 0mm 6mm;
 }
 .border{
 	border:1px solid black;

@@ -46,7 +46,7 @@ class ReportCard{
 			'4'=>'4','3'=>'3','2'=>'2','1'=>'1','NA'=>'NA','.'=>'UG', 'selected'=>'4'
 			);
 	private $schema_logosg = Array(
-			'...'=>'---- Achievement ----',
+			'.'=>'---- Achievement ----',
 			'A+'=>'A+',
 			'A'=>'A',
 			'A-'=>'A-',
@@ -61,33 +61,33 @@ class ReportCard{
 			'D-'=>'D-',
 			'F'=>'F',
 			'NA'=>'NA',
-			'.'=>'UG',
-			'..'=>'---- Effort ----',
+			'.'=>'UG', 
+			'.'=>'---- Effort ----',
 			'E'=>'E',
 			'G'=>'G',
 			'S'=>'S',
 			'N'=>'N','U'=>'U',
 			'NA'=>'NA',
-			'.'=>'UG',
+			'.'=>'UG', 
 			'selected'=>'A'
 			);
 	private $schema_logose = Array(
 			'E'=>'E','G'=>'G','S'=>'S','N'=>'N','U'=>'U','NA'=>'NA','.'=>'UG', 'selected'=>'E'
 			);
-    private $effort_schema;
-	  private $grade_schema;
-	  private $language_id;
 
-function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="209", $teacher_kh_id="209",$school_id="1"){
+	private $effort_schema;
+	private $grade_schema;
+	private $language_id;
+	function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="209", $teacher_kh_id="209",$school_id="1"){
 
-    $this->school_id = $school_id;
+		$this->school_id = $school_id;
 		$this->syear=$syear;
 		$this->sid=$sid;
 		$this->template_id=$template_id;
 		$this->teacher_id=$teacher_id;
 		$this->teacher_kh_id=$teacher_kh_id;
 		$this->date = date("d M Y",time());
-
+		
 		$this->language_id=1; //English
 
 		$dbh = $this->connectELDB();
@@ -142,7 +142,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 		$query->execute();
 		$mp_result = $query->fetchAll(PDO::FETCH_ASSOC);
 		$i = 1;
-
+		
 		//this runs once per marking period -
 		foreach($mp_result as $val){
 			$sdate = $val['start_date'];
@@ -150,16 +150,15 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 			$short_name = $val['short_name'];
 
 			//get total number of days per marking period from attendance calendar (all the way to the end of the year)
-			$q = $sdbh->prepare("SELECT COUNT(*) as count from attendance_calendar where syear=$syear AND school_id=$school_id 
-				AND school_date>='".$sdate."' AND school_date<='".$edate."'");
+			$q = $sdbh->prepare("SELECT COUNT(*) as count from attendance_calendar where syear=$syear AND school_id=$school_id AND school_date>='"
+					.$sdate."' AND school_date<='".$edate."'");
 			$q->execute();
 			$res = $q->fetch();
-
+			
 			//get total number of days present for selected student by
 			$qda = $sdbh->prepare("
 					SELECT count(attendance_period.school_date) as count from attendance_period,
-					(SELECT id from attendance_codes where syear=$syear AND school_id =$school_id AND title LIKE \"present\") 
-					as present_id
+					(SELECT id from attendance_codes where syear=$syear AND school_id =$school_id AND title LIKE \"present\") as present_id
 					WHERE
 					attendance_period.attendance_code = present_id.id AND student_id = $sid AND school_date>='"
 					.$sdate."' AND school_date<='".$edate."'");
@@ -169,37 +168,33 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 			//get total number of days tardy
 			$qdt = $sdbh->prepare("
 					SELECT count(attendance_period.school_date) as count from attendance_period,
-					(SELECT id from attendance_codes where syear=$syear AND school_id =$school_id AND title LIKE \"late\") 
-					as late_id
+					(SELECT id from attendance_codes where syear=$syear AND school_id =$school_id AND title LIKE \"late\") as late_id
 					WHERE
 					attendance_period.attendance_code = late_id.id AND student_id = $sid AND school_date>='"
 					.$sdate."' AND school_date<='".$edate."'");
 			$qdt->execute();
 			$dtres = $qdt->fetch();
-
+			
 			//get the total number of unknown days
-			$q = $sdbh->prepare("SELECT COUNT(*) as count from attendance_calendar where syear=$syear AND school_id=$school_id 
-				AND school_date>='".date("Y-m-d",strtotime("Tomorrow"))."' AND school_date<='".$edate."'");
-
+			$q = $sdbh->prepare("SELECT COUNT(*) as count from attendance_calendar where syear=$syear AND school_id=$school_id AND school_date>='"
+					.date("Y-m-d",strtotime("Tomorrow"))."' AND school_date<='".$edate."'");
+		
 			$q->execute();
 			$dures = $q->fetch();
-
-
+			
+		
 			//load them up
 			$sdays[$short_name] = $res['count'];
 
-			/* 
-			 * days absent are the total days - days present - days tardy 
-			 * (that is: all attendance codes that aren't 'present' or 'late') 
-			 */
+			//days absent are the total days - days present - days tardy (that is: all attendance codes that aren't 'present' or 'late')
 			$da[$short_name] = $res['count'] - $dares['count'] - $dtres['count'] - $dures['count'];
 			if($da[$short_name]<0) $da[$short_name]=0;
 
 			$dt[$short_name] = $dtres['count'];
 
-			//not strictly necessary
+			//not strictly necessary			
 			$du[$short_name] = $dures['count'];
-
+			
 		}
 
 		//hand the arrays off
@@ -230,9 +225,9 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 		print("</td>");
 		print("</tr></table>");
 		?>
-		<!-- --------------------------------------------Break Here------------------------------------------------------ -->
+		<!-- --------------------------------------------Break Here-------------------------------------------------------------------------------------- -->
 		<div style ="page-break-before: always;"></div>
-		<!-- --------------------------------------------Break Here------------------------------------------------------ -->
+		<!-- --------------------------------------------Break Here-------------------------------------------------------------------------------------- -->
 
 			<?php
 
@@ -251,9 +246,19 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 					//does this happen? Move on to the right side
 					if($topic_id==$this->HEIGHTLIMIT){
 						print("</table><br>"); //these breaks move the left table up in line with the right, may have to change
+						?>
+						<table>
+							<tr class = "sectiontitlecenter"><td colspan="2"  style = "width:100%; font-size:xsmall">Achievement</td></tr>
+							<tr><td style="width:3%" align="center">A</td><td style = "width:50%; font-size: xsmall;">Outstanding Achievement. The pupil has mastered the objectives in the subject area, shows initiative, applies knowledge gained to new situations, and accepts responsibility for learning.</tr>
+							<tr><td style="width:3%" align="center">B</td><td style = "width:50%; font-size: xsmall;">Above Average (High) Achievement. The pupil has mastered most of the objectives in the subject area, is above average in initiative, application of knowledge, and accepting responsibility for learning.</td></tr>
+							<tr><td style="width:3%" align="center">C</td><td style = "width:50%; font-size: xsmall;">Satisfactory Achievement. The pupil has mastered the basic objectives. With direction and stimulation by the teacher the student is progressing in initiative, application of knowledge, and accepting responsibility for learning.</td></tr>
+							<tr><td style="width:3%" align="center">D</td><td style = "width:50%; font-size: xsmall;">Below Average (Needs Improvement in) Achievement. The pupil has mastered few of the basic objectives in the subject area. Needs time, help and practice to improve.</td></tr>
+							<tr><td style="width:3%" align="center">F</td><td style = "width:50%; font-size: xsmall;">Unsatisfactory Achievement. The pupil has not mastered the basic objectives in the subject area. Significant time, help and practice required to improve and pass.</td></tr>
+							<tr><td style="width:3%" align="center">I</td><td style = "width:50%; font-size: xsmall;">Insufficient Data has been collected to give a proper assesment.</td></tr>
+						</table>
 
-						//this is Faith's fault! We'll have to figure out a way to store these in the DB and pull them over.
-						$this->printGradeTable(53);						
+
+						<?php
 						print("</td><td class = \"right\"><table class = \"outline\">");
 						$this->printHeader();
 					}
@@ -262,8 +267,8 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 					$topic_id++;
 				}
 
-				print("</table><br/>");
-				$this->printGradeTable(54);
+				print("</table>");
+				$this->printKey();
 				print("</td>");
 			print("</tr></table>");
 	}
@@ -337,8 +342,8 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 	?>
 			<br/>
 			<table style = "border-style:none;">
-
-
+				
+					
 						<table style = "width:100%; position: relative;">
 							<tr class = "sectiontitlecenter"><td colspan="2" style = "width:100%; font-size:xsmall">Effort</td></tr>
 							<tr><td style="width:3%" align="center">E</td><td style = "width:50%; font-size: xsmall;">Excellent</td></tr>
@@ -348,7 +353,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 							<tr><td style="width:3%" align="center">U</td><td style = "width:50%; font-size: xsmall;">Unsatisfactory</td></tr>
 							<tr><td style="width:3%" align="center">NA</td><td style = "width:50%; font-size: xsmall;">Not Applicable</td></tr>
 						</table>
-
+					
 				</tr>
 			</table>
 		<?php
@@ -590,36 +595,6 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 
 		$percent = ($count/$total)*100;
 		return $percent;
-
-	}
-
-	 function printGradeTable($schema_id){
-		$dbh = $this->connectOpenSIS();
-		$q = $dbh->prepare("SELECT * FROM report_card_grades WHERE grade_scale_id=$schema_id");
-		$q->execute();
-		$res = $q->fetchAll();
-
-		$tq = $dbh->prepare("SELECT title FROM report_card_grade_scales WHERE id=$schema_id");
-		$tq->execute();
-		$title = $tq->fetch();
-		$title = $title['title'];
-		//begin the table and print the title
-		?>
-			<table style = "position: relative;">
-				<tr class = "sectiontitlecenter">
-					<td colspan="2" style = "width:100%; font-size:xsmall"><?php print $title?></td>
-				</tr>
-		<?php
-		foreach($res as $row){
-			//$row['title'] $row['comment']
-			?>
-				<tr><td style="width:3%" align="center"><?php print($row['title']);?></td>
-					<td style = "width:50%; font-size: xsmall;"><?php print($row['comment']);?></td>
-				</tr>
-			<?php
-		}
-
-	?>		</table><?php
 
 	}
 	//these are terrible.

@@ -1,5 +1,9 @@
 <?php
 	session_start();
+	//hacky hack to make the percentages show up right.
+	$quarter = 1;
+	$mp_id=5-$quarter;
+
 	include("ReportCard.php");
 
 	//pull in the default values if we don't already have them
@@ -108,7 +112,7 @@
 		//otherwise pull the SID
 		$tempsid = $collate[1];
 
-		$data = intval($rp->hasData($tempsid));
+		$data = intval($rp->hasData($tempsid))*$mp_id;
 			if      ($data>=75){ $color = "white";}
 			else if ($data>=50 && $data<75){ $color = "orange";}
 			else if ($data<50) { $color = "rgb(100,55,55)";}
@@ -118,7 +122,7 @@
 		if($sid == 0) $sid = $tempsid;
 
 		print("<tr><td><a href = \"teacherview.php?sid=$student.$tempsid\">$student</a></td>");
-		print("<td style = \"color: $color\">".$data."%</a></td>");
+		print("<td style = \"color: $color\">".($data)."%</a></td>");
 
 		$count++;
 		$data_total += $data;

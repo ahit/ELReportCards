@@ -1,10 +1,14 @@
 <?php
+ //hacky hack to make the percentages show up right.
+        $quarter = 1;
+        $mp_id=5-$quarter;
+
 	session_start();
 	include("ReportCard.php");
 	
 	//pull in the default values if we don't already have them
 	if(!isset($_REQUEST['syear']))
-		$syear = 2012;
+		$syear = 2013;
 	else
 		$syear = $_REQUEST['syear'];
 	
@@ -61,7 +65,7 @@
 	$students = $rp->getEnrolledStudents();
 	$count = 0;
 	$data_total = 0;
-	print("<div id = \"nav\">");
+	print("<div id = \"nav\" style=\"position: fixed;\">");
 	print("<h1><a href =\"#\" class = \"expander\">".$rp->getGrade()." - ".$rp->getTeacherName()."</a></h1>");
 print("<div class = \"content\">\n<table>");
 	print("<tr><td>Name</td><td>Estimated Completion</td>");
@@ -74,7 +78,9 @@ print("<div class = \"content\">\n<table>");
 		//otherwise pull the SID
 		$tempsid = $collate[1];
 		
-		$data = intval($rp->hasData($tempsid));
+		$data = intval($rp->hasData($tempsid))*$mp_id;
+
+	//	$data = intval($rp->hasData($tempsid));
 			if      ($data>=75){ $color = "white";}
 			else if ($data>=50 && $data<75){ $color = "orange";}
 			else if ($data<50) { $color = "rgb(255,128,128)";}

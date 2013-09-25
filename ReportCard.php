@@ -19,6 +19,11 @@ class ReportCard{
    private $phone_number="XXX-XXX-XXXX";
    private $website="logoscambodia.org";
 
+   private $f1title = "Q1";
+   private $f2title = "Q2";
+   private $f3title = "Q3";
+   private $f4title = "Q4";
+
    //total school days by marking period (array keyed with marking period short name)
    private $sdays;
 
@@ -83,9 +88,10 @@ class ReportCard{
    private $schema_logose = Array(
          'E'=>'E','G'=>'G','S'=>'S','N'=>'N','U'=>'U','NA'=>'NA','.'=>'UG', 'selected'=>'E'
          );
-    private $effort_schema;
-     private $grade_schema;
-     private $language_id;
+   private $effort_schema;
+   private $grade_schema;
+   private $language_id;
+   private $alt_language_id;
 
 function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="209", $teacher_kh_id="209",$school_id="1"){
 
@@ -98,6 +104,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
       $this->date = date("d M Y",time());
 
       $this->language_id=1; //English
+      $this->alt_language_id=0; //none
 
       $dbh = $this->connectELDB();
       $sdbh =$this->connectOpenSIS();
@@ -139,8 +146,8 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
       $this->KEY = $template['key'];
 
       if($this->COLUMNS == 4){
-         $this->effort_schema = $this->schema_logose;
-         $this->grade_schema = $this->schema_logosg;
+         $this->effort_schema = $this->getGradeArray(54);
+         $this->grade_schema= $this->getGradeArray(50);
       }
       elseif($this->COLUMNS == 3){
          $this->effort_schema = $this->schema_3;
@@ -252,7 +259,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
                   print("</table>"); //these breaks move the left table up in line with the right, may have to change
 
                   //this is Faith's fault! We'll have to figure out a way to store these in the DB and pull them over.
-                  $this->printGradeTable(53);
+                  $this->printGradeTable(50);
                   print("</div><div id=\"A5\" class=\"right\"><table border=1 style=\"width:100%;margin:0px;\">");
                   $this->printHeader();
                }
@@ -342,7 +349,10 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
       else if($this->COLUMNS ==4){
          ?>
          <tr><td class="sectiontitle"><b>Grading Period</b></td>
-         <td class = "sectiontitlecenter">Q1</td><td class = "sectiontitlecenter">Q2</td><td class = "sectiontitlecenter">Q3</td><td class = "sectiontitlecenter">Q4</td></tr>
+         <td class = "sectiontitlecenter"><?php print($this->f1title);?></td>
+	 <td class = "sectiontitlecenter"><?php print($this->f2title);?></td>
+	 <td class = "sectiontitlecenter"><?php print($this->f3title);?></td>
+	 <td class = "sectiontitlecenter"><?php print($this->f4title);?></td></tr>
          <?php
       }
    }
@@ -354,9 +364,9 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
       $template_id = $this->template_id;
       $sid = $this->sid;
 
-      $alt_lang = 0; //2 is Khmer, 0 is no alt_lang
+      $alt_lang = $this->alt_language_id;
 
-      //fetch alt_language text (hard coded for khmer currently)
+      //fetch alt_language text (hard coded currently)
       $text_q = $dbh->prepare("SELECT * from template_fields where topic_id='".$row['topic_id']."' and template_id='".$template_id."' and language_id='".$alt_lang."'");
       $text_q->execute();
       $alt_lang=$text_q->fetch();
@@ -367,44 +377,43 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
          $query = $dbh->prepare($sql);
          $query->execute();
          $grades = $query->fetchAll();
+
          //default values if things don't exist
-         $truegrades = Array(
-               "S1E"=>".",
-               "S1G"=>".",
-               "S2E"=>".",
-               "S2G"=>"."
-         );
+		$f1 = ".";
+		$f2 = ".";
+		$f3 = ".";
+		$f4 = ".";
 
          foreach($grades as $grade){
             if(strcmp($grade['value'],"Ch") == 0) $grade['value'] = "<img src = \"img\check.png\">";
             switch ($grade){
                //case S1E
-               case (strcasecmp($grade['term'],"S1") == 0 && strcasecmp($grade['type'], "E") == 0):
-                  $truegrades['S1E'] = $grade['value'];
+               case (strcasecmp($grade['term'],"F1") == 0):
+                  $f1 = $grade['value'];
                   break;
                   // case S1G
-               case (strcasecmp($grade['term'],"S1") == 0 && strcasecmp($grade['type'], "G") == 0):
-                  $truegrades['S1G'] = $grade['value'];
+               case (strcasecmp($grade['term'],"F2") == 0):
+                  $f2 = $grade['value'];
                   break;
                   // case S2E
-               case (strcasecmp($grade['term'],"S2") == 0 && strcasecmp($grade['type'], "E") == 0):
-                  $truegrades['S2E'] = $grade['value'];
+               case (strcasecmp($grade['term'],"F3") == 0):
+                  $f3 = $grade['value'];
                   break;
                   // case S2G
-               case (strcasecmp($grade['term'],"S2") == 0 && strcasecmp($grade['type'], "G") == 0):
-                  $truegrades['S2G'] = $grade['value'];
+               case (strcasecmp($grade['term'],"F4") == 0):
+                  $f4 = $grade['value'];
                   break;
             }
 
          }
          print("<tr><td align=\"right\" width=80% class = \"rowtitle\">".$row['text']."<br>".$alt_lang['text']."</td>
 
-               <td align = \"center\"  width=5% class=\"editGrade\" id=\"S1G".$row['topic_id']."\">".$truegrades['S1G']."</td>
-               <td align = \"center\"  width=5% class=\"editEffort\" class=\"editGrade\" id=\"S1E".$row['topic_id']."\">".$truegrades['S1E']."</td>
-               <td align = \"center\"  width=5% class=\"editGrade\"class=\"editGrade\" id=\"S2G".$row['topic_id']."\">".$truegrades['S2G']."</td>"
+               <td align = \"center\"  width=5% class=\"editGrade\" id=\"F1".$row['topic_id']."\">".$this->grade_schema[$f1]."</td>
+               <td align = \"center\"  width=5% class=\"editEffort\" class=\"editGrade\" id=\"F2".$row['topic_id']."\">".$this->grade_schema[$f2]."</td>
+               <td align = \"center\"  width=5% class=\"editGrade\"class=\"editGrade\" id=\"F3".$row['topic_id']."\">".$this->grade_schema[$f3]."</td>"
          );
          if($this->COLUMNS == 4)
-            print("<td align = \"center\" width=5% class=\"editEffort\"class=\"editGrade\" id=\"S2E".$row['topic_id']."\">".$truegrades['S2E']."</td>"
+            print("<td align = \"center\" width=5% class=\"editEffort\"class=\"editGrade\" id=\"F4".$row['topic_id']."\">".$this->grade_schema[$f4]."</td>"
          );
 
       }
@@ -551,7 +560,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
       }
       //otherwise just pull the grades and count those
       else{
-         $sql = "SELECT count(*) as count from el_grades WHERE template_id = '$template_id' AND student_id = '$sid' AND type = 'E' AND value NOT LIKE '.'";
+         $sql = "SELECT count(*) as count from el_grades WHERE template_id = '$template_id' AND student_id = '$sid'";
          $query = $dbh->prepare($sql);
          $query->execute();
          $res = $query->fetch();
@@ -577,10 +586,39 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 
    }
 
+   //returns an array with acceptable grading values
+   function getGradeArray($schema_id){
+	$dbh = $this->connectOpenSIS();
+    	$q = $dbh->prepare("SELECT title, id FROM report_card_grades WHERE grade_scale_id=$schema_id order by id asc");
+    	$q->execute();
+    	$res = $q->fetchAll();
+
+  	$tq = $dbh->prepare("SELECT title FROM report_card_grade_scales WHERE id=$schema_id");
+      $tq->execute();
+      $title = $tq->fetch();
+      $title = $title['title'];
+
+	
+	$ret = Array();
+
+	//include title, for easy looking menus
+	$ret[$title]="--".$title."--";
+
+	foreach($res as $val){
+		$key = $val['id'];
+		$ret[$key]=$val['title'];
+	}
+	
+	//include 'no value' key	
+	$ret['.']=".";
+
+	return $ret;
+    }
+
    //prints out the grades, comments and title of a given ID in report_card_grades
     function printGradeTable($schema_id){
       $dbh = $this->connectOpenSIS();
-      $q = $dbh->prepare("SELECT * FROM report_card_grades WHERE grade_scale_id=$schema_id");
+      $q = $dbh->prepare("SELECT * FROM report_card_grades WHERE grade_scale_id=$schema_id AND comment NOT LIKE ''");
       $q->execute();
       $res = $q->fetchAll();
 

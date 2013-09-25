@@ -2,6 +2,7 @@
 session_start();
 
 $template_id = $_SESSION['template_id'];
+$gradeschema = $_SESSION['gradeschema'];
 
 //hack to let the list be alphabetized.
 $collate = explode(".",$_SESSION['sid']);
@@ -22,20 +23,26 @@ if(strcmp($id, "sid")==0){
 }
 
 else if(strlen($id)>2){
-	$term = substr($id,0,2); //S1 or S2
-	$type = substr($id,2,1); //Grade or Effort or Comment
-	$topic_id = substr($id,3); //Topic ID (number, or E/K)
+	$term = substr($id,0,2); //F1,F2,F3,F4... more?
+	//$type = substr($id,2,1);
+	$type = null; //formerly Grade or Effort or Comment - no longer needed
+	$topic_id = substr($id,2); //Topic ID (number, or E/K) 
 	
 	$sql = "INSERT INTO el_grades (template_id, topic_id, student_id, term, type, value)
 			VALUES ('$template_id', '$topic_id', '$sid', '$term', '$type', '$value')
 			ON DUPLICATE KEY UPDATE value='$value'";
 
+	if(strcmp($value,".") == 0) 
+		$sql = "DELETE FROM el_grades where template_id='$template_id' AND topic_id='$topic_id' AND term='$term' and student_id='$sid'";
 	
 	
 	$query = $dbh->prepare($sql);
 	$query->execute();
 	
+	
 	if(strcmp($value,"Ch") == 0) $value = "<img src = \"img\check.png\">";
+	else $value = $gradeschema[$value];
+	
 }
 else{
 	$comment_id = substr($id,1);

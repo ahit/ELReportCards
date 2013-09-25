@@ -47,48 +47,13 @@ class ReportCard{
    private $COLUMNS = 4;
    private $KEY = 1;
 
-   //grading schema - if these are updated, need to redo headers and key
+   //special schema for 3 column layouts
    private $schema_3 = Array(
          'Ch'=>'✔',
          '.'=>' ',
          'selected'=>'✔'
          );
-   private $schema_4e = Array(
-         'E'=>'E','G'=>'G','S'=>'S','N'=>'N','U'=>'U','NA'=>'NA','.'=>'UG', 'selected'=>'E'
-         );
-   private $schema_4g = Array(
-         '4'=>'4','3'=>'3','2'=>'2','1'=>'1','NA'=>'NA','.'=>'UG', 'selected'=>'4'
-         );
-   private $schema_logosg = Array(
-         '...'=>'---- Achievement ----',
-         'A+'=>'A+',
-         'A'=>'A',
-         'A-'=>'A-',
-         'B+'=>'B+',
-         'B'=>'B',
-         'B-'=>'B-',
-         'C+'=>'C+',
-         'C'=>'C',
-         'C-'=>'C-',
-         'D+'=>'D+',
-         'D'=>'D',
-         'D-'=>'D-',
-         'F'=>'F',
-         'NA'=>'NA',
-         '.'=>'UG',
-         '..'=>'---- Effort ----',
-         'E'=>'E',
-         'G'=>'G',
-         'S'=>'S',
-         'N'=>'N','U'=>'U',
-         'NA'=>'NA',
-         '.'=>'UG',
-         'selected'=>'A'
-         );
-   private $schema_logose = Array(
-         'E'=>'E','G'=>'G','S'=>'S','N'=>'N','U'=>'U','NA'=>'NA','.'=>'UG', 'selected'=>'E'
-         );
-   private $effort_schema;
+
    private $grade_schema;
    private $language_id;
    private $alt_language_id;
@@ -146,11 +111,9 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
       $this->KEY = $template['key'];
 
       if($this->COLUMNS == 4){
-         $this->effort_schema = $this->getGradeArray(54);
          $this->grade_schema= $this->getGradeArray(50);
       }
       elseif($this->COLUMNS == 3){
-         $this->effort_schema = $this->schema_3;
          $this->grade_schema = $this->schema_3;
       }
       //where do s1 and s2 begin? (will have to re-evaluate for a Logos version where we go by quarter(?))
@@ -334,12 +297,8 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
    function getGradeSchema(){
       return str_replace("\"","'",json_encode($this->grade_schema));
    }
-   function getEffortSchema(){
-      return str_replace("\"","'",json_encode($this->effort_schema));
-   }
 
-
-   //prints the grading header (effort/grade/semester and so on) - expects an open table
+   //prints the grading header (grade/semester and so on) - expects an open table
    function printHeader(){
       if($this->COLUMNS == 3){
          ?>
@@ -366,7 +325,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 
       $alt_lang = $this->alt_language_id;
 
-      //fetch alt_language text (hard coded currently)
+      //fetch alt_language text
       $text_q = $dbh->prepare("SELECT * from template_fields where topic_id='".$row['topic_id']."' and template_id='".$template_id."' and language_id='".$alt_lang."'");
       $text_q->execute();
       $alt_lang=$text_q->fetch();
@@ -409,11 +368,11 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
          print("<tr><td align=\"right\" width=80% class = \"rowtitle\">".$row['text']."<br>".$alt_lang['text']."</td>
 
                <td align = \"center\"  width=5% class=\"editGrade\" id=\"F1".$row['topic_id']."\">".$this->grade_schema[$f1]."</td>
-               <td align = \"center\"  width=5% class=\"editEffort\" class=\"editGrade\" id=\"F2".$row['topic_id']."\">".$this->grade_schema[$f2]."</td>
+               <td align = \"center\"  width=5% class=\"editGrade\" class=\"editGrade\" id=\"F2".$row['topic_id']."\">".$this->grade_schema[$f2]."</td>
                <td align = \"center\"  width=5% class=\"editGrade\"class=\"editGrade\" id=\"F3".$row['topic_id']."\">".$this->grade_schema[$f3]."</td>"
          );
          if($this->COLUMNS == 4)
-            print("<td align = \"center\" width=5% class=\"editEffort\"class=\"editGrade\" id=\"F4".$row['topic_id']."\">".$this->grade_schema[$f4]."</td>"
+            print("<td align = \"center\" width=5% class=\"editGrade\"class=\"editGrade\" id=\"F4".$row['topic_id']."\">".$this->grade_schema[$f4]."</td>"
          );
 
       }

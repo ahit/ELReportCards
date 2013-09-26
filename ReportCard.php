@@ -84,10 +84,11 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 
       //generate actual student name
       if($sid!=null){
-         $query = $sdbh->prepare("SELECT first_name, last_name from students where student_id = '$sid'");
+	 $query = $sdbh->prepare("SELECT first_name, last_name, common_name from students where student_id = '$sid'");
          $query->execute();
          $val = $query->fetch();
-         $this->sname = $val['last_name'].", ".$val['first_name'];
+         $this->sname = $val['last_name'].", ".$val['first_name'];      
+                if(strlen($val['common_name'])>1) $this->sname.=" '".$val['common_name']."'";
       }
       else $this->sname = "Please Select a Student";
 

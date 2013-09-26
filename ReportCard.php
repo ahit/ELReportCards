@@ -55,6 +55,9 @@ class ReportCard{
          );
 
    private $grade_schema;
+   private $grade_schema_id;
+   private $alt_grade_schema_id;
+
    private $language_id;
    private $alt_language_id;
 
@@ -68,8 +71,11 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
       $this->teacher_kh_id=$teacher_kh_id;
       $this->date = date("d M Y",time());
 
-      $this->language_id=1; //English
+      $this->language_id=3; //Q1-English
       $this->alt_language_id=0; //none
+
+      $this->grade_schema_id = 54;
+      $this->alt_grade_schema_id = 50;
 
       $dbh = $this->connectELDB();
       $sdbh =$this->connectOpenSIS();
@@ -111,7 +117,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
       $this->KEY = $template['key'];
 
       if($this->COLUMNS == 4){
-         $this->grade_schema= $this->getGradeArray(50);
+         $this->grade_schema= $this->getGradeArray($this->grade_schema_id,$this->alt_grade_schema_id);
       }
       elseif($this->COLUMNS == 3){
          $this->grade_schema = $this->schema_3;
@@ -222,7 +228,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
                   print("</table>"); //these breaks move the left table up in line with the right, may have to change
 
                   //this is Faith's fault! We'll have to figure out a way to store these in the DB and pull them over.
-                  $this->printGradeTable(50);
+                  $this->printGradeTable($this->alt_grade_schema_id);
                   print("</div><div id=\"A5\" class=\"right\"><table border=1 style=\"width:100%;margin:0px;\">");
                   $this->printHeader();
                }
@@ -232,7 +238,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
             }
 
             print("</table>");
-            $this->printGradeTable(54);
+            $this->printGradeTable($this->grade_schema_id);
          print("</div></div>");
 
    }
@@ -546,9 +552,9 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
    }
 
    //returns an array with acceptable grading values
-   function getGradeArray($schema_id){
+   function getGradeArray($schema_id, $alt_id){
 	$dbh = $this->connectOpenSIS();
-    	$q = $dbh->prepare("SELECT title, id FROM report_card_grades WHERE grade_scale_id=$schema_id order by id asc");
+    	$q = $dbh->prepare("SELECT title, id FROM report_card_grades WHERE grade_scale_id=$schema_id OR grade_scale_id=$alt_id order by grade_scale_id asc");
     	$q->execute();
     	$res = $q->fetchAll();
 
@@ -559,9 +565,6 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 
 	
 	$ret = Array();
-
-	//include title, for easy looking menus
-	$ret[$title]="--".$title."--";
 
 	foreach($res as $val){
 		$key = $val['id'];

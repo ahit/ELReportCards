@@ -16,7 +16,7 @@ class ReportCard{
    private $subtitle="a ministry of Asian Hope";
    private $location="Phnom Penh, Kingdom of Cambodia";
    private $doctitle="2013-2014 Report Card"; //use $syear to make this
-   private $phone_number="XXX-XXX-XXXX";
+   private $phone_number="017-473-515";
    private $website="logoscambodia.org";
 
    private $f1title = "Q1";
@@ -88,7 +88,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
          $query->execute();
          $val = $query->fetch();
          $this->sname = $val['last_name'].", ".$val['first_name'];      
-                if(strlen($val['common_name'])>1) $this->sname.=" '".$val['common_name']."'";
+                if(isset($val['common_name'])) $this->sname.=" '".$val['common_name']."'";
       }
       else $this->sname = "Please Select a Student";
 
@@ -224,6 +224,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
             $topic_id = 0;
             foreach($dbh->query("SELECT * from template_fields WHERE template_id='".$this->template_id."'AND language_id='".$this->language_id."' ORDER BY topic_id") as $row) {
 
+		$topic_id = $row['topic_id'];
                //does this happen? Move on to the right side
                if($topic_id==$this->HEIGHTLIMIT){
                   print("</table>"); //these breaks move the left table up in line with the right, may have to change
@@ -234,8 +235,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
                   $this->printHeader();
                }
 
-               $this->printRow($row,$topic_id);
-               $topic_id++;
+               $this->printRow($row);
             }
 
             print("</table>");
@@ -325,7 +325,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 
 
    //prints a table row - either grades or a section header
-   private function printRow($row,$topic_id){
+   private function printRow($row){
       $dbh = $this->connectELDB();
       $template_id = $this->template_id;
       $sid = $this->sid;

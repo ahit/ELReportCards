@@ -329,6 +329,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
       $dbh = $this->connectELDB();
       $template_id = $this->template_id;
       $sid = $this->sid;
+      $topic_id = $row['topic_id'];
 
       $alt_lang = $this->alt_language_id;
 
@@ -531,14 +532,6 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
          $query->execute();
          $res = $query->fetch();
          $count = $res['count'];
-
-         $sql = "SELECT count(*) as count from el_grades WHERE template_id = '$template_id' AND student_id = '$sid' AND type = 'G' AND value NOT LIKE '.'";
-         $query = $dbh->prepare($sql);
-         $query->execute();
-         $res = $query->fetch();
-         $count += $res['count'];
-
-         $count /= 2;
       }
 
       $sql = "SELECT count(*) as count from template_fields WHERE template_id = '$template_id' AND is_graded = 1";

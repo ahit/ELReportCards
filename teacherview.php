@@ -1,8 +1,7 @@
 <?php
 	session_start();
 	//hacky hack to make the percentages show up right.
-	$quarter = 1;
-	$mp_id=5-$quarter;
+	$mp_id = 1;
 
 	include("ReportCard.php");
 
@@ -53,7 +52,7 @@
 	}
 
 	$rp = new ReportCard($syear,$sid,$template_id,$teacher_id, $teacher_kh_id);
-	$_SESSION['gradeschema']=$rp->getGradeArray(50);
+	$_SESSION['gradeschema']=$rp->getGradeArray(50,53);
 	?>
 	<html>
 	<head><meta charset="UTF-8" />

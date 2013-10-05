@@ -414,14 +414,15 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 
     ?>
       <p class="comment_title">General Comments</p>
-      <p class="comment_title" >Q1</p>
+      <p class="comment_title" ><?php print($this->f1title);?></p>
       <div class="commentblock" id="C1"><?php print $truecomments['1'];?></div>
-      <p class="comment_title">Q2</p>
+      <p class="comment_title"><?php print($this->f2title);?></p>
       <div class="commentblock" id="C2"><?php print $truecomments['2'];?></div>
-      <p class="comment_title">Q2</p>
+      <p class="comment_title"><?php print($this->f3title);?></p>
       <div class="commentblock" id="C3"><?php print $truecomments['3'];?></div>
-      <p class="comment_title">Q2</p>
+      <p class="comment_title"><?php print($this->f4title);?></p>
       <div class="commentblock" id="C4"><?php print $truecomments['4'];?></div>
+
 
     <?php
 

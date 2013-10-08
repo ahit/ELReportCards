@@ -23,7 +23,7 @@
 		$sid = $collate[1];
 	}
 	else{
-		$sid = null;
+		$sid = 0;
 	}
 
 	//are we sending from a form? or have we already gotten a teacher?

@@ -1,4 +1,6 @@
 <?php
+session_destroy(); //kill default student selection
+session_start();
 //connect to DB
 $school_id = 1;
 $syear = 2013;

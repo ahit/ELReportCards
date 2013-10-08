@@ -54,9 +54,8 @@ class ReportCard{
          'selected'=>'✔'
          );
 
-   private $grade_schema;
-   private $grade_schema_id;
-   private $alt_grade_schema_id;
+   private $grade_schema; //eventual array of grade values and their ids.
+   private $grade_schema_id; //an array of a few elements linking to schema ids in reportcard_grades
 
    private $language_id;
    private $alt_language_id;
@@ -74,14 +73,11 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
       $this->language_id=3; //Q1-English
       $this->alt_language_id=0; //none
 
-      $this->grade_schema_id = 54;
-      $this->alt_grade_schema_id = 50;
-
       $dbh = $this->connectELDB();
       $sdbh =$this->connectOpenSIS();
 
       // Good stuff starts here!
-
+      
       //generate actual student name
       if($sid!=null){
 	 $query = $sdbh->prepare("SELECT first_name, last_name, common_name from students where student_id = '$sid'");
@@ -118,7 +114,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
       $this->KEY = $template['key'];
 
       if($this->COLUMNS == 4){
-         $this->grade_schema= $this->getGradeArray($this->grade_schema_id,$this->alt_grade_schema_id);
+         $this->grade_schema= $this->getGradeArray($template_id);
       }
       elseif($this->COLUMNS == 3){
          $this->grade_schema = $this->schema_3;
@@ -230,7 +226,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
                   print("</table>"); //these breaks move the left table up in line with the right, may have to change
 
                   //this is Faith's fault! We'll have to figure out a way to store these in the DB and pull them over.
-                  $this->printGradeTable($this->alt_grade_schema_id);
+                  $this->printGradeTable(1);
                   print("</div><div id=\"A5\" class=\"right\"><table border=1 style=\"width:100%;margin:0px;\">");
                   $this->printHeader();
                }
@@ -239,7 +235,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
             }
 
             print("</table>");
-            $this->printGradeTable($this->grade_schema_id);
+            $this->printGradeTable(2);
          print("</div></div>");
 
    }
@@ -547,24 +543,34 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
    }
 
    //returns an array with acceptable grading values
-   function getGradeArray($schema_id, $alt_id){
-	$dbh = $this->connectOpenSIS();
-    	$q = $dbh->prepare("SELECT title, id FROM report_card_grades WHERE grade_scale_id=$schema_id OR grade_scale_id=$alt_id order by grade_scale_id asc");
+   function getGradeArray($template_id){
+
+      $dbh = $this->connectELDB();
+      $gquery = $dbh->prepare("SELECT * from template_grading WHERE template_id=$template_id");
+      $gquery->execute();
+      $schemas = $gquery->fetchAll();
+
+     foreach($schemas as $schema){
+	$grade_scale_id = $schema['reportcard_grade_scale_id'];
+	$sdbh = $this->connectOpenSIS();
+    	$q = $sdbh->prepare("SELECT title, id FROM report_card_grades WHERE grade_scale_id=$grade_scale_id order by grade_scale_id asc");
     	$q->execute();
     	$res = $q->fetchAll();
 
-  	$tq = $dbh->prepare("SELECT title FROM report_card_grade_scales WHERE id=$schema_id");
-      $tq->execute();
-      $title = $tq->fetch();
-      $title = $title['title'];
+  	$tq = $sdbh->prepare("SELECT title FROM report_card_grade_scales WHERE id=$schema_id");
+        $tq->execute();
+        $title = $tq->fetch();
+        $title = $title['title'];
 
 	
 	$ret = Array();
 
+	//slightly naive, but the nature of the table should guarantee no colissions.
 	foreach($res as $val){
 		$key = $val['id'];
 		$ret[$key]=$val['title'];
 	}
+      }
 	
 	//include 'no value' key	
 	$ret['.']=".";
@@ -572,14 +578,22 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 	return $ret;
     }
 
-   //prints out the grades, comments and title of a given ID in report_card_grades
-    function printGradeTable($schema_id){
-      $dbh = $this->connectOpenSIS();
-      $q = $dbh->prepare("SELECT * FROM report_card_grades WHERE grade_scale_id=$schema_id AND comment NOT LIKE ''");
+   //prints out the grades, comments and title for the row number given 
+    function printGradeTable($row){
+      $sdbh = $this->connectOpenSIS();
+      $dbh = $this->connectELDB();
+      $template_id=$this->template_id;
+
+      $gquery = $dbh->prepare("SELECT * from template_grading WHERE template_id=$template_id");
+      $gquery->execute();
+
+      for($i=0;$i<$row;$i++){ $s=$gquery->fetch(); $schema_id=$s['reportcard_grade_scale_id'];}
+
+      $q = $sdbh->prepare("SELECT * FROM report_card_grades WHERE grade_scale_id=$schema_id AND comment NOT LIKE ''");
       $q->execute();
       $res = $q->fetchAll();
 
-      $tq = $dbh->prepare("SELECT title FROM report_card_grade_scales WHERE id=$schema_id");
+      $tq = $sdbh->prepare("SELECT title FROM report_card_grade_scales WHERE id=$schema_id");
       $tq->execute();
       $title = $tq->fetch();
       $title = $title['title'];

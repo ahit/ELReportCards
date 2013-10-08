@@ -52,7 +52,7 @@
 	}
 
 	$rp = new ReportCard($syear,$sid,$template_id,$teacher_id, $teacher_kh_id);
-	$_SESSION['gradeschema']=$rp->getGradeArray(50,53);
+	$_SESSION['gradeschema']=$rp->getGradeArray($_SESSION['template_id']);
 	?>
 	<html>
 	<head><meta charset="UTF-8" />

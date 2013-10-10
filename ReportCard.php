@@ -504,6 +504,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
    function hasData($sid){
       $dbh = $this->connectELDB();
       $template_id = $this->template_id;
+      $language_id= $this->language_id;
 
       $sql = "SELECT columns from templates WHERE template_id = '$template_id'";
       $query = $dbh->prepare($sql);
@@ -531,7 +532,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
          $count = $res['count'];
       }
 
-      $sql = "SELECT count(*) as count from template_fields WHERE template_id = '$template_id' AND is_graded = 1";
+      $sql = "SELECT count(*) as count from template_fields WHERE template_id = '$template_id' AND is_graded = 1 and language_id='$language_id'";
       $query = $dbh->prepare($sql);
       $query->execute();
       $res = $query->fetch();

@@ -550,6 +550,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
       $gquery = $dbh->prepare("SELECT * from template_grading WHERE template_id=$template_id");
       $gquery->execute();
       $schemas = $gquery->fetchAll();
+      $ret = Array();
 
      foreach($schemas as $schema){
 	$grade_scale_id = $schema['reportcard_grade_scale_id'];
@@ -564,7 +565,6 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
         $title = $title['title'];
 
 	
-	$ret = Array();
 
 	//slightly naive, but the nature of the table should guarantee no colissions.
 	foreach($res as $val){

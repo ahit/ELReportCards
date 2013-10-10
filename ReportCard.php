@@ -598,6 +598,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
       $title = $tq->fetch();
       $title = $title['title'];
       //begin the table and print the title
+      if($title){
       ?>
          <table border=1 style="width:90%;">
             <tr class = "sectiontitlecenter">
@@ -614,6 +615,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
       }
 
    ?>      </table><?php
+   } //end if($title)
 
    }
    //these are terrible.

@@ -183,8 +183,8 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
          $du[$short_name] = $dures['count'];
 	}
 	else{
-		$da[$short_name] = "--";
-		$dt[$short_name] = "--";
+		$da[$short_name] = "-";
+		$dt[$short_name] = "-";
          	$du[$short_name] = $dures['count'];
 	}
 

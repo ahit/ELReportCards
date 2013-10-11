@@ -167,8 +167,8 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
          $dures = $q->fetch();
 
 
-         //load them up
          $sdays[$short_name] = $res['count'];
+	if(strtotime("Tomorrow")>=strtotime($edate)){
 
          /*
           * days absent are the total days - days present - days tardy
@@ -181,6 +181,12 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 
          //not strictly necessary
          $du[$short_name] = $dures['count'];
+	}
+	else{
+		$da[$short_name] = "--";
+		$dt[$short_name] = "--";
+         	$du[$short_name] = $dures['count'];
+	}
 
       }
 

@@ -168,7 +168,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 
 
          $sdays[$short_name] = $res['count'];
-	if(strtotime("Tomorrow")>=strtotime($edate)){
+	if(strtotime("+2 Weeks")>=strtotime($edate)){
 
          /*
           * days absent are the total days - days present - days tardy

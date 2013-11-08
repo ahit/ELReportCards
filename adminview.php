@@ -1,6 +1,6 @@
 <?php
  //hacky hack to make the percentages show up right.
-        $mp_id= 1;
+        $mp_id= .5;
 
 	session_start();
 	include("ReportCard.php");

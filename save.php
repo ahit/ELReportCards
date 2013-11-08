@@ -32,15 +32,15 @@ else if(strlen($id)>2){
 			VALUES ('$template_id', '$topic_id', '$sid', '$term', '$type', '$value')
 			ON DUPLICATE KEY UPDATE value='$value'";
 
-	if(strcmp($value,".") == 0) 
+	if((strcmp($value,".") == 0) || (strcmp($value," ")==0)) 
 		$sql = "DELETE FROM el_grades where template_id='$template_id' AND topic_id='$topic_id' AND term='$term' and student_id='$sid'";
 	
 	
 	$query = $dbh->prepare($sql);
-	$query->execute();
+	$query->execute() or die();
 	
 	
-	if(strcmp($value,"Ch") == 0) $value = "<img src = \"img\check.png\">";
+	if(strcmp($value,"Ch") == 0) $value = "✔'";
 	else $value = $gradeschema[$value];
 	
 }

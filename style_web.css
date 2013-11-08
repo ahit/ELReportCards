@@ -10,7 +10,7 @@ font-family: sans-serif;
 #nav{
 	font-size: large;
 	color:white;
-	background-color: #136e9c;
+	background-color: black;
 	padding: 10px;
 
 	position: absolute;
@@ -52,8 +52,8 @@ font-family: sans-serif;
 }
 .content tr{
 	font-size: medium;
-	border: solid black 1px;
-	background-color: #136e9c;
+	border: solid white 1px;
+	background-color: black;
 }
 .content td{
 	font-size: medium;
@@ -189,7 +189,7 @@ font-family: sans-serif;
 	width: 100%;
 	margin: 0px;
 
-	background-color: rgb(196,196,196);
+	background-color: rgb(240,240,240);
 	border:1px solid black;
 	display:-webkit-box;
 	-webkit-box-pack:center;

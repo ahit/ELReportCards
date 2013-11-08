@@ -2,7 +2,7 @@
 session_destroy(); //kill default student selection
 session_start();
 //connect to DB
-$school_id = 1;
+$school_id = 2;
 $syear = 2013;
 
 include("data.php");
@@ -14,7 +14,7 @@ $dsn = $DatabaseType.":host=".$DatabaseServer.";dbname=".$DatabaseName;
 $sdbh = new PDO($dsn, "$DatabaseUsername", "$DatabasePassword");
 
 $templates = array();
-$query = $dbh->prepare("SELECT * from templates order by template_name ASC");
+$query = $dbh->prepare("SELECT * from templates where school_id=2 order by template_name ASC");
 $query->execute();
 $templates_result = $query->fetchAll(PDO::FETCH_ASSOC);
 foreach($templates_result as $val){

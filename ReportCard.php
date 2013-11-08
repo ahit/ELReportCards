@@ -11,18 +11,25 @@ class ReportCard{
    private $teacher_kh_name;
 
   //using $school_id we'll pull the following data
-   private $logo="img/LISLogo.png";
-   private $school_title="Logos International School";
+   private $logo="img/AHISLogo.png";
+   private $school_title="Asian Hope International School";
    private $subtitle="a ministry of Asian Hope";
    private $location="Phnom Penh, Kingdom of Cambodia";
    private $doctitle="2013-2014 Report Card"; //use $syear to make this
-   private $phone_number="017-473-515";
-   private $website="logoscambodia.org";
+   private $phone_number="XXXXXXXX";
+   private $website="asianhopeschool.org";
 
-   private $f1title = "Q1";
-   private $f2title = "Q2";
-   private $f3title = "Q3";
-   private $f4title = "Q4";
+   private $f1title = "Grade";
+   private $f2title = "Effort";
+   private $f3title = "Grade";
+   private $f4title = "Effort";
+
+   private $c1title = "English Subjects - S1";
+   private $c2title = "Khmer Subjects - S1";
+   private $c3title = "English Subjects - S2";
+   private $c4title = "Khmer Subjects - S2";
+
+   //total school days by marking period (array keyed with marking period short name)
 
    //total school days by marking period (array keyed with marking period short name)
    private $sdays;
@@ -60,7 +67,7 @@ class ReportCard{
    private $language_id;
    private $alt_language_id;
 
-function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="209", $teacher_kh_id="209",$school_id="1"){
+function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="209", $teacher_kh_id="209",$school_id="2"){
 
     $this->school_id = $school_id;
       $this->syear=$syear;
@@ -70,8 +77,8 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
       $this->teacher_kh_id=$teacher_kh_id;
       $this->date = date("d M Y",time());
 
-      $this->language_id=3; //Q1-English
-      $this->alt_language_id=0; //none
+      $this->language_id=5; //S1-English
+      $this->alt_language_id=6; //S1-Khmer
 
       $dbh = $this->connectELDB();
       $sdbh =$this->connectOpenSIS();
@@ -163,7 +170,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
          $q = $sdbh->prepare("SELECT COUNT(*) as count from attendance_calendar where syear=$syear AND school_id=$school_id
             AND school_date>='".date("Y-m-d",strtotime("Tomorrow"))."' AND school_date<='".$edate."'");
 
-         $q->execute();
+         $q->execute() or die();
          $dures = $q->fetch();
 
 
@@ -232,7 +239,6 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
                   print("</table>"); //these breaks move the left table up in line with the right, may have to change
 
                   //this is Faith's fault! We'll have to figure out a way to store these in the DB and pull them over.
-                  $this->printGradeTable(1);
                   print("</div><div id=\"A5\" class=\"right\"><table border=1 style=\"width:100%;margin:0px;\">");
                   $this->printHeader();
                }
@@ -241,7 +247,8 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
             }
 
             print("</table>");
-            $this->printGradeTable(2);
+            print("<table style=\"width: 100%; position: relative; left:-35px;\"><tr><td>");$this->printGradeTable(1);print("</td>");
+            print("<td>");$this->printGradeTable(2);print("</td></tr></table>");
          print("</div></div>");
 
    }
@@ -311,12 +318,16 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
    function printHeader(){
       if($this->COLUMNS == 3){
          ?>
-         <tr><td class = "sectiontitlecenter"></td><td class = "sectiontitlecenterfixed">Yes<br/>ធ្វើបាន</td><td class = "sectiontitlecenterfixed">Developing<br/>កំពុងធ្វើ</td><td class = "sectiontitlecenterfixed">Not Yet<br/>មិនទាន់ធ្វើ</td>
+         <tr><td class = "sectiontitlecenter"></td>
+         <td class = "sectiontitlecenterfixed" style="min-width:4.5em;">Yes<br/>ធ្វើបាន</td>
+         <td class = "sectiontitlecenterfixed" style="min-width:4.5em;">Developing<br/>កំពុងធ្វើ</td>
+         <td class = "sectiontitlecenterfixed" style="min-width:4.5em;">Not Yet<br/>មិនទាន់ធ្វើ</td></tr>
          <?php
       }
       else if($this->COLUMNS ==4){
          ?>
-         <tr><td class="sectiontitle"><b>Grading Period</b></td>
+         <tr><td class="sectiontitle"><b>Grading Period</b></td><td class="sectiontitlecenter" colspan=2>S1</td><td class="sectiontitlecenter" colspan=2>S2</td></tr><tr>
+         <td class = "sectiontitlecenter"></td>
          <td class = "sectiontitlecenter"><?php print($this->f1title);?></td>
 	 <td class = "sectiontitlecenter"><?php print($this->f2title);?></td>
 	 <td class = "sectiontitlecenter"><?php print($this->f3title);?></td>
@@ -354,7 +365,6 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 		$f4 = ".";
 
          foreach($grades as $grade){
-            if(strcmp($grade['value'],"Ch") == 0) $grade['value'] = "<img src = \"img\check.png\">";
             switch ($grade){
                //case S1E
                case (strcasecmp($grade['term'],"F1") == 0):
@@ -416,13 +426,13 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 
     ?>
       <p class="comment_title">General Comments</p>
-      <p class="comment_title" ><?php print($this->f1title);?></p>
+      <p class="comment_title" ><?php print($this->c1title);?></p>
       <div class="commentblock" id="C1"><?php print $truecomments['1'];?></div>
-      <p class="comment_title"><?php print($this->f2title);?></p>
+      <p class="comment_title"><?php print($this->c2title);?></p>
       <div class="commentblock" id="C2"><?php print $truecomments['2'];?></div>
-      <p class="comment_title"><?php print($this->f3title);?></p>
+      <p class="comment_title"><?php print($this->c3title);?></p>
       <div class="commentblock" id="C3"><?php print $truecomments['3'];?></div>
-      <p class="comment_title"><?php print($this->f4title);?></p>
+      <p class="comment_title"><?php print($this->c4title);?></p>
       <div class="commentblock" id="C4"><?php print $truecomments['4'];?></div>
 
 
@@ -458,30 +468,22 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 
 
       <table border=1>
-               <tr>   <td align = "right" style = "width: 60%"><b>Quarter</b></td>
+               <tr>   <td align = "right" style = "width: 60%"><b>Semester</b></td>
                 <td align = "center" style = "width:10%">1</td>
                 <td align = "center"  style = "width:10%">2</td>
-                <td align = "center"  style = "width:10%">3</td>
-                <td align = "center"  style = "width:10%">4</td>
                </tr>
                <tr>   <td align = "center" colspan="5" style ="font-size:normal;"><b>Attendance</b></td></tr>
                <tr>   <td align = "right"><b>Number of School Days</b></td>
-                  <td align = "center"><?php print $this->sdays['Q1'];?></td>
-                  <td align = "center"><?php print $this->sdays['Q2'];?></td>
-                  <td align = "center"><?php print $this->sdays['Q3'];?></td>
-                  <td align = "center"><?php print $this->sdays['Q4'];?></td>
+                  <td align = "center"><?php print $this->sdays['SEM1'];?></td>
+                  <td align = "center"><?php print $this->sdays['SEM2'];?></td>
                </tr>
                <tr>   <td align = "right"><b>Days Absent</b></td>
-                  <td align = "center"><?php print $this->da['Q1'];?></td>
-                  <td align = "center"><?php print $this->da['Q2']; ?></td>
-                  <td align = "center"><?php print $this->da['Q3'];?></td>
-                  <td align = "center"><?php print $this->da['Q4']; ?></td>
+                  <td align = "center"><?php print $this->da['SEM1'];?></td>
+                  <td align = "center"><?php print $this->da['SEM2']; ?></td>
                </tr>
                <tr>   <td align = "right"><b>Days Tardy</b></td>
-                  <td align = "center"><?php print $this->dt['Q1'];?></td>
-                  <td align = "center"><?php print $this->dt['Q2'];?></td>
-                  <td align = "center"><?php print $this->dt['Q3'];?></td>
-                  <td align = "center"><?php print $this->dt['Q4'];?></td>
+                  <td align = "center"><?php print $this->dt['SEM1'];?></td>
+                  <td align = "center"><?php print $this->dt['SEM2'];?></td>
                </tr>
             </table>
 

@@ -12,11 +12,11 @@ class ReportCard{
 
   //using $school_id we'll pull the following data
    private $logo="img/AHISLogo.png";
-   private $school_title="Asian Hope International School";
+   private $school_title="";
    private $subtitle="a ministry of Asian Hope";
    private $location="Phnom Penh, Kingdom of Cambodia";
    private $doctitle="2013-2014 Report Card"; //use $syear to make this
-   private $phone_number="XXXXXXXX";
+   private $phone_number="+855-23-885-170";
    private $website="asianhopeschool.org";
 
    private $f1title = "Grade";

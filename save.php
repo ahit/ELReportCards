@@ -40,7 +40,7 @@ else if(strlen($id)>2){
 	$query->execute() or die();
 	
 	
-	if(strcmp($value,"Ch") == 0) $value = "✔'";
+	if(strcmp($value,"Ch") == 0) $value = "✔";
 	else $value = $gradeschema[$value];
 	
 }

@@ -78,6 +78,12 @@ foreach($teachers_kh_result as $val){
 
 			<input type="submit" value="Submit">
 		</form>
+ 	<p><em>updated 11 Nov 2013</em>
+		<ul>
+			<li>AHIS Specific customizations</li>
+		</ul>
+	</p>
+                
  	<p><em>updated 11 Oct 2013</em>
 		<ul>
 			<li>not showing 'current' marking period in attendance</li>

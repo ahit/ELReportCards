@@ -175,7 +175,9 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 
 
          $sdays[$short_name] = $res['count'];
-	if(strtotime("+2 Weeks")>=strtotime($edate)){
+
+        //that is, don't show attendance too far in advance 
+	if(strtotime("+6 Weeks")>=strtotime($edate)){
 
          /*
           * days absent are the total days - days present - days tardy

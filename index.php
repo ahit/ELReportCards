@@ -1,6 +1,9 @@
 <?php
 session_destroy(); //kill default student selection
+
 session_start();
+$_SESSION = Array(); //make sure everything is gone!
+
 //connect to DB
 $school_id = 2;
 $syear = 2013;

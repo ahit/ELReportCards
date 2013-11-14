@@ -119,7 +119,7 @@
 			else 				{ $color = "brown";}
 
 		//by default, select the first student in the list
-		if($sid == 0) $sid = $tempsid;
+		if($sid == 0){ $sid = $tempsid; $_SESSION['sid'] = "default.$tempsid"; }
 
 		print("<tr><td><a href = \"teacherview.php?sid=$student.$tempsid\">$student</a></td>");
 		print("<td style = \"color: $color\">".($data)."%</a></td>");
@@ -130,5 +130,7 @@
 	print("<tr><td><strong>Total Completion:</strong></td><td><strong>".(intval($data_total/$count))."%</strong></td></tr>");
 	print("</table><a href =\"index.php\">- choose another template -</a></div></div>");
 	$rp = new ReportCard($syear,$sid,$template_id,$teacher_id, $teacher_kh_id);
+
+        print("Currently selected student: $sid<br>In session: ".$_SESSION['sid']);
 	$rp->toHTML();
 ?>

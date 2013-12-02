@@ -96,14 +96,14 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
                     $this->c1title=$ctitle['comment_text'];
                     break;
                 case 2:
-                    break;
                     $this->c2title=$ctitle['comment_text'];
+                    break;
                 case 3:
-                    break;
                     $this->c3title=$ctitle['comment_text'];
-                case 4:
                     break;
+                case 4:
                     $this->c4title=$ctitle['comment_text'];
+                    break;
                 default:
                     break;
             }

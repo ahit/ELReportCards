@@ -84,6 +84,31 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
       $sdbh =$this->connectOpenSIS();
 
       // Good stuff starts here!
+
+      //Find out if there are custom comment headings
+      $query = $dbh->prepare("SELECT * from comment_fields where template_id ='$template_id'");
+      $query->execute();
+      $res = $query->fetchAll();
+      if(count($res)>0){
+        foreach($res as $ctitle){
+            switch($ctitle['comment_id']){
+                case 1:
+                    $this->c1title=$ctitle['comment_text'];
+                    break;
+                case 2:
+                    break;
+                    $this->c2title=$ctitle['comment_text'];
+                case 3:
+                    break;
+                    $this->c3title=$ctitle['comment_text'];
+                case 4:
+                    break;
+                    $this->c4title=$ctitle['comment_text'];
+                default:
+                    break;
+            }
+        }
+      }
       
       //generate actual student name
       if($sid!=null){

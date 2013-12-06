@@ -1,11 +1,16 @@
 <?php
  //hacky hack to make the percentages show up right.
-        $mp_id= .5;
+        $mp_id= 1;
 
 	session_start();
 	include("ReportCard.php");
 	
 	//pull in the default values if we don't already have them
+	if(!isset($_REQUEST['school_id']))
+		$school_id= 1;
+	else
+		$school_id = $_REQUEST['school_id'];
+	
 	if(!isset($_REQUEST['syear']))
 		$syear = 2013;
 	else
@@ -44,7 +49,7 @@
 		$_SESSION['template_id'] = $template_id;
 	}
 	
-	$rp = new ReportCard($syear,$sid,$template_id,$teacher_id, $teacher_kh_id);
+	$rp = new ReportCard($syear,$sid,$template_id,$teacher_id, $teacher_kh_id,$school__id);
 	?>
 	<html>
 	<head><meta charset="UTF-8" />
@@ -101,7 +106,7 @@ print("<div class = \"content\">\n<table>");
 		if(strcmp($collate[0],"selected")==0) break;
 		$sid = $collate[1];
 		print("<a name = \"$sid\"></a>");
-		$rp = new ReportCard($syear,$sid,$template_id,$teacher_id, $teacher_kh_id);
+		$rp = new ReportCard($syear,$sid,$template_id,$teacher_id, $teacher_kh_id,$school_id);
 		$rp->toHTML();
 		?>
 				<div style ="page-break-after: always;"></div>	

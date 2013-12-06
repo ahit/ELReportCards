@@ -1,11 +1,16 @@
 <?php
 	session_start();
 	//hacky hack to make the percentages show up right.
-	$mp_id = .5;
+	$mp_id = 1;
 
 	include("ReportCard.php");
 
 	//pull in the default values if we don't already have them
+	if(!isset($_REQUEST['school_id']))
+		$school_id = 1;
+	else
+		$school_id = $_REQUEST['school_id'];
+
 	if(!isset($_REQUEST['syear']))
 		$syear = 2013;
 	else
@@ -51,7 +56,7 @@
 		$_SESSION['template_id'] = $template_id;
 	}
 
-	$rp = new ReportCard($syear,$sid,$template_id,$teacher_id, $teacher_kh_id);
+	$rp = new ReportCard($syear,$sid,$template_id,$teacher_id, $teacher_kh_id,$school_id);
 	$_SESSION['gradeschema']=$rp->getGradeArray($_SESSION['template_id']);
 	?>
 	<html>
@@ -129,7 +134,7 @@
 	}
 	print("<tr><td><strong>Total Completion:</strong></td><td><strong>".(intval($data_total/$count))."%</strong></td></tr>");
 	print("</table><a href =\"index.php\">- choose another template -</a></div></div>");
-	$rp = new ReportCard($syear,$sid,$template_id,$teacher_id, $teacher_kh_id);
+	$rp = new ReportCard($syear,$sid,$template_id,$teacher_id, $teacher_kh_id,$school_id);
 
 	$rp->toHTML();
 ?>

@@ -4,10 +4,14 @@ session_destroy(); //kill default student selection
 session_start();
 $_SESSION = Array(); //make sure everything is gone!
 
-//connect to DB
-$school_id = 2;
+//get it all set up again
+$school_id = 1;
 $syear = 2013;
 
+$_SESSION['school_id'] = $school_id;
+$_SESSION['syear'] = $syear;
+
+//connect to DB
 include("data.php");
 $dsn = $DatabaseType.":host=".$DatabaseServer.";dbname=".$ELDatabaseName;
 $dbh = new PDO($dsn, "$DatabaseUsername", "$DatabasePassword");
@@ -17,7 +21,7 @@ $dsn = $DatabaseType.":host=".$DatabaseServer.";dbname=".$DatabaseName;
 $sdbh = new PDO($dsn, "$DatabaseUsername", "$DatabasePassword");
 
 $templates = array();
-$query = $dbh->prepare("SELECT * from templates where school_id=2 order by template_name ASC");
+$query = $dbh->prepare("SELECT * from templates where school_id=$school_id order by template_name ASC");
 $query->execute();
 $templates_result = $query->fetchAll(PDO::FETCH_ASSOC);
 foreach($templates_result as $val){
@@ -69,10 +73,6 @@ foreach($teachers_kh_result as $val){
 
 			<select name ="teacher_id">
 				<?php foreach($teachers_result as $teacher) print("<option value = \"".$teacher['staff_id']."\">".$teacher['last_name'].", ".$teacher['first_name']."</option>")?>
-			</select>
-			<select name ="teacher_kh_id">
-                <option value = "0">No Khmer Teacher</option>
-				<?php foreach($teachers_kh_result as $teacher) print("<option value = \"".$teacher['staff_id']."\">".$teacher['last_name'].", ".$teacher['first_name']."</option>")?>
 			</select>
 			<select name ="template_id">
 				<?php foreach($templates as $template_id =>$template) print("<option value =\"".$template_id."\">".$template."</option>")?>

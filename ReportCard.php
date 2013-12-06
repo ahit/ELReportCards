@@ -528,6 +528,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
       ?>
          <tr><td><b>Principal's Signature</b></td>         <td class="right">&nbsp;&nbsp;___________________________</td></tr>
       </table>
+      <div style="position: relative; top: -25px; left:100px;"><img src="img/faith.png"></div>
 
       <?php
    }

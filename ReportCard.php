@@ -11,25 +11,23 @@ class ReportCard{
    private $teacher_kh_name;
 
   //using $school_id we'll pull the following data
-   private $logo="img/AHISLogo.png";
-   private $school_title="";
+   private $logo="img/LISLogo.png";
+   private $school_title="Logos International School";
    private $subtitle="a ministry of Asian Hope";
    private $location="Phnom Penh, Kingdom of Cambodia";
    private $doctitle="2013-2014 Report Card"; //use $syear to make this
-   private $phone_number="+855-23-885-170";
-   private $website="asianhopeschool.org";
+   private $phone_number="017-473-515";
+   private $website="logoscambodia.org";
 
-   private $f1title = "Grade";
-   private $f2title = "Effort";
-   private $f3title = "Grade";
-   private $f4title = "Effort";
+   private $f1title = "Q1";
+   private $f2title = "Q2";
+   private $f3title = "Q3";
+   private $f4title = "Q4";
 
-   private $c1title = "English Subjects - S1";
-   private $c2title = "Khmer Subjects - S1";
-   private $c3title = "English Subjects - S2";
-   private $c4title = "Khmer Subjects - S2";
-
-   //total school days by marking period (array keyed with marking period short name)
+   private $c1title = "Q1";
+   private $c2title = "Q2";
+   private $c3title = "Q3";
+   private $c4title = "Q4";
 
    //total school days by marking period (array keyed with marking period short name)
    private $sdays;
@@ -77,8 +75,8 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
       $this->teacher_kh_id=$teacher_kh_id;
       $this->date = date("d M Y",time());
 
-      $this->language_id=5; //S1-English
-      $this->alt_language_id=6; //S1-Khmer
+      $this->language_id=4; //Q2 English
+      $this->alt_language_id=0; //none
 
       $dbh = $this->connectELDB();
       $sdbh =$this->connectOpenSIS();
@@ -228,7 +226,6 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
       $this->sdays = $sdays;
       $this->dt = $dt;
       $this->da = $da;
-
 
    }
 
@@ -495,22 +492,30 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 
 
       <table border=1>
-               <tr>   <td align = "right" style = "width: 60%"><b>Semester</b></td>
+               <tr>   <td align = "right" style = "width: 60%"><b>Quarter</b></td>
                 <td align = "center" style = "width:10%">1</td>
                 <td align = "center"  style = "width:10%">2</td>
+                <td align = "center"  style = "width:10%">3</td>
+                <td align = "center"  style = "width:10%">4</td>
                </tr>
                <tr>   <td align = "center" colspan="5" style ="font-size:normal;"><b>Attendance</b></td></tr>
                <tr>   <td align = "right"><b>Number of School Days</b></td>
-                  <td align = "center"><?php print $this->sdays['SEM1'];?></td>
-                  <td align = "center"><?php print $this->sdays['SEM2'];?></td>
+                  <td align = "center"><?php print $this->sdays['Q1'];?></td>
+                  <td align = "center"><?php print $this->sdays['Q2'];?></td>
+                  <td align = "center"><?php print $this->sdays['Q3'];?></td>
+                  <td align = "center"><?php print $this->sdays['Q4'];?></td>
                </tr>
                <tr>   <td align = "right"><b>Days Absent</b></td>
-                  <td align = "center"><?php print $this->da['SEM1'];?></td>
-                  <td align = "center"><?php print $this->da['SEM2']; ?></td>
+                  <td align = "center"><?php print $this->da['Q1']; ?></td>
+                  <td align = "center"><?php print $this->da['Q2']; ?></td>
+                  <td align = "center"><?php print $this->da['Q3']; ?></td>
+                  <td align = "center"><?php print $this->da['Q4']; ?></td>
                </tr>
                <tr>   <td align = "right"><b>Days Tardy</b></td>
-                  <td align = "center"><?php print $this->dt['SEM1'];?></td>
-                  <td align = "center"><?php print $this->dt['SEM2'];?></td>
+                  <td align = "center"><?php print $this->dt['Q1'];?></td>
+                  <td align = "center"><?php print $this->dt['Q2'];?></td>
+                  <td align = "center"><?php print $this->dt['Q3'];?></td>
+                  <td align = "center"><?php print $this->dt['Q4'];?></td>
                </tr>
             </table>
 

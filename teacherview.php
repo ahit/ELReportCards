@@ -131,6 +131,5 @@
 	print("</table><a href =\"index.php\">- choose another template -</a></div></div>");
 	$rp = new ReportCard($syear,$sid,$template_id,$teacher_id, $teacher_kh_id);
 
-        print("Currently selected student: $sid<br>In session: ".$_SESSION['sid']);
 	$rp->toHTML();
 ?>

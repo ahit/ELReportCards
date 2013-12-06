@@ -91,7 +91,6 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
       $res = $query->fetchAll();
       if(count($res)>0){
         foreach($res as $ctitle){
-            print($ctitle['comment_id']);
             switch($ctitle['comment_id']){
                 case 1:
                     $this->c1title=$ctitle['comment_text'];

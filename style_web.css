@@ -202,9 +202,10 @@ font-family: sans-serif;
 }
 
 .commentblock{
-	width: 100%;
+	width: 98%;
 	height: 20%;
 	margin: 0px;
+        padding: 1%;
 
 	border:1px solid black;
 	display:-webkit-box;

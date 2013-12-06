@@ -179,9 +179,10 @@ body{
 }
 
 .commentblock{
-	width: 100%;
+	width: 98%;
 	height: 20%;
 	margin: 0px;
+        padding: 1%;
 
 	border:1px solid black;
 	display:-webkit-box;
@@ -189,7 +190,7 @@ body{
 	-webkit-box-align:left-top;
 	-webkit-box-orient:vertical;
 
-  font-size: x-small;
+        font-size: x-small;
 
 
 }

@@ -31,8 +31,17 @@ foreach($templates_result as $val){
 
 
 //grab staff names for list
-$query = $sdbh->prepare("SELECT staff_id, first_name, last_name from staff WHERE syear = $syear and current_school_id=$school_id and profile ='teacher' and is_disable IS NULL and profile_id=2
-		order by last_name");
+$query = $sdbh->prepare("
+        SELECT pos_staff.staff_id, pos_staff.first_name, pos_staff.last_name from
+
+        (SELECT * FROM `staff_school_relationship` WHERE syear=$syear AND school_id=$school_id) as cur_staff,
+        (SELECT staff_id, first_name, last_name from staff WHERE staff.profile_id='2' AND is_disable IS NULL) as pos_staff
+
+        WHERE
+        pos_staff.staff_id = cur_staff.staff_id
+
+        ORDER BY pos_staff.last_name ASC
+                        ");
 $query->execute();
 $teachers_result = $query->fetchAll(PDO::FETCH_ASSOC);
 $teachers = array();
@@ -43,8 +52,17 @@ foreach($teachers_result as $val){
 	$teachers['id'] = $val['staff_id'];
 }
 
-$query = $sdbh->prepare("SELECT staff_id, first_name, last_name from staff WHERE syear = $syear and current_school_id=$school_id and profile_id ='5' and is_disable IS NULL
-		order by last_name");
+$query = $sdbh->prepare("
+        SELECT pos_staff.staff_id, pos_staff.first_name, pos_staff.last_name from
+
+        (SELECT * FROM `staff_school_relationship` WHERE syear=$syear AND school_id=$school_id) as cur_staff,
+        (SELECT staff_id, first_name, last_name from staff WHERE staff.profile_id='5' AND is_disable IS NULL) as pos_staff
+
+        WHERE
+        pos_staff.staff_id = cur_staff.staff_id
+
+        ORDER BY pos_staff.last_name ASC
+		");
 $query->execute();
 $teachers_kh_result = $query->fetchAll(PDO::FETCH_ASSOC);
 $teachers_kh = array();
@@ -81,6 +99,11 @@ foreach($teachers_kh_result as $val){
 
 			<input type="submit" value="Submit">
 		</form>
+ 	<p><em>updated 28 Feb 2014</em>
+		<ul>
+			<li>updated queries to match current version of OpenSIS (5.3)</li>
+		</ul>
+	</p>
  	<p><em>updated 11 Nov 2013</em>
 		<ul>
 			<li>AHIS Specific customizations</li>

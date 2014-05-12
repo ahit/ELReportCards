@@ -75,7 +75,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
       $this->teacher_kh_id=$teacher_kh_id;
       $this->date = date("d M Y",time());
 
-      $this->language_id=4; //Q2 English
+      $this->language_id=6; //Q3 English
       $this->alt_language_id=0; //none
 
       $dbh = $this->connectELDB();
@@ -304,7 +304,8 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
              FROM students, schedule
              WHERE
              schedule.student_id = students.student_id AND schedule.syear = $this->syear AND schedule.school_id=$this->school_id
-             AND students.is_disable IS NULL AND schedule.end_date IS NULL)
+             AND students.is_disable IS NULL AND (schedule.end_date IS NULL
+                OR schedule.end_date>'".date('Y-m-d')."'))
              as enrolled_students,
 
             (SELECT course_title, course_period_id FROM course_details WHERE teacher_id = $this->teacher_id) as course

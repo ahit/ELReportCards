@@ -6,10 +6,10 @@
 	include("ReportCard.php");
 
 	//pull in the default values if we don't already have them
-	if(!isset($_REQUEST['syear']))
-		$syear = 2013;
+	if(!isset($_SESSION['syear']))
+		$syear = 2014;
 	else
-		$syear = $_REQUEST['syear'];
+		$syear = $_SESSION['syear'];
 
 	if(isset($_REQUEST['sid'])){
 		$collate = explode(".",$_REQUEST['sid']);

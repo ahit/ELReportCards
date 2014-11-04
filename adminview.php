@@ -6,10 +6,10 @@
 	include("ReportCard.php");
 	
 	//pull in the default values if we don't already have them
-	if(!isset($_REQUEST['syear']))
+	if(!isset($_SESSION['syear']))
 		$syear = 2013;
 	else
-		$syear = $_REQUEST['syear'];
+		$syear = $_SESSION['syear'];
 	
 	if(!isset($_SESSION['sid']))
 		$sid = null;

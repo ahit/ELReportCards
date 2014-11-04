@@ -311,7 +311,10 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 		OR schedule.end_date>'".date('Y-m-d')."'))
              as enrolled_students,
 
-            (SELECT course_title, course_period_id FROM course_details WHERE teacher_id = $this->teacher_id) as course
+            (SELECT course_title, course_period_id FROM course_details 
+		WHERE teacher_id = $this->teacher_id
+		AND course_title LIKE '%".$grade."%'
+	    ) as course
 
 
             WHERE

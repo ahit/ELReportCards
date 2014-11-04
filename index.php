@@ -4,10 +4,14 @@ session_destroy(); //kill default student selection
 session_start();
 $_SESSION = Array(); //make sure everything is gone!
 
-//connect to DB
+//get it all set up again
 $school_id = 2;
-$syear = 2013;
+$syear = 2014;
 
+$_SESSION['school_id'] = $school_id;
+$_SESSION['syear'] = $syear;
+
+//connect to DB
 include("data.php");
 $dsn = $DatabaseType.":host=".$DatabaseServer.";dbname=".$ELDatabaseName;
 $dbh = new PDO($dsn, "$DatabaseUsername", "$DatabasePassword");
@@ -17,7 +21,7 @@ $dsn = $DatabaseType.":host=".$DatabaseServer.";dbname=".$DatabaseName;
 $sdbh = new PDO($dsn, "$DatabaseUsername", "$DatabasePassword");
 
 $templates = array();
-$query = $dbh->prepare("SELECT * from templates where school_id=2 order by template_name ASC");
+$query = $dbh->prepare("SELECT * from templates where school_id=$school_id order by template_name ASC");
 $query->execute();
 $templates_result = $query->fetchAll(PDO::FETCH_ASSOC);
 foreach($templates_result as $val){
@@ -27,8 +31,17 @@ foreach($templates_result as $val){
 
 
 //grab staff names for list
-$query = $sdbh->prepare("SELECT staff_id, first_name, last_name from staff WHERE syear = $syear and current_school_id=$school_id and profile ='teacher' and is_disable IS NULL and profile_id=2
-		order by last_name");
+$query = $sdbh->prepare("
+        SELECT pos_staff.staff_id, pos_staff.first_name, pos_staff.last_name from
+
+        (SELECT * FROM `staff_school_relationship` WHERE syear=$syear AND school_id=$school_id) as cur_staff,
+        (SELECT staff_id, first_name, last_name from staff WHERE staff.profile_id='2' AND is_disable IS NULL) as pos_staff
+
+        WHERE
+        pos_staff.staff_id = cur_staff.staff_id
+
+        ORDER BY pos_staff.last_name ASC
+                        ");
 $query->execute();
 $teachers_result = $query->fetchAll(PDO::FETCH_ASSOC);
 $teachers = array();
@@ -39,8 +52,17 @@ foreach($teachers_result as $val){
 	$teachers['id'] = $val['staff_id'];
 }
 
-$query = $sdbh->prepare("SELECT staff_id, first_name, last_name from staff WHERE syear = $syear and current_school_id=$school_id and profile_id ='5' and is_disable IS NULL
-		order by last_name");
+$query = $sdbh->prepare("
+        SELECT pos_staff.staff_id, pos_staff.first_name, pos_staff.last_name from
+
+        (SELECT * FROM `staff_school_relationship` WHERE syear=$syear AND school_id=$school_id) as cur_staff,
+        (SELECT staff_id, first_name, last_name from staff WHERE staff.profile_id='5' AND is_disable IS NULL) as pos_staff
+
+        WHERE
+        pos_staff.staff_id = cur_staff.staff_id
+
+        ORDER BY pos_staff.last_name ASC
+		");
 $query->execute();
 $teachers_kh_result = $query->fetchAll(PDO::FETCH_ASSOC);
 $teachers_kh = array();
@@ -70,7 +92,7 @@ foreach($teachers_kh_result as $val){
 			<select name ="teacher_id">
 				<?php foreach($teachers_result as $teacher) print("<option value = \"".$teacher['staff_id']."\">".$teacher['last_name'].", ".$teacher['first_name']."</option>")?>
 			</select>
-			<select name ="teacher_kh_id">
+<select name ="teacher_kh_id">
                 <option value = "0">No Khmer Teacher</option>
 				<?php foreach($teachers_kh_result as $teacher) print("<option value = \"".$teacher['staff_id']."\">".$teacher['last_name'].", ".$teacher['first_name']."</option>")?>
 			</select>
@@ -81,6 +103,11 @@ foreach($teachers_kh_result as $val){
 
 			<input type="submit" value="Submit">
 		</form>
+ 	<p><em>updated 28 Feb 2014</em>
+		<ul>
+			<li>updated queries to match current version of OpenSIS (5.3)</li>
+		</ul>
+	</p>
  	<p><em>updated 11 Nov 2013</em>
 		<ul>
 			<li>AHIS Specific customizations</li>

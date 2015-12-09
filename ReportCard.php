@@ -11,11 +11,11 @@ class ReportCard{
    private $teacher_kh_name;
 
   //using $school_id we'll pull the following data
-   private $logo="img/AHISLogo.png";
+   private $logo="img/AHISLogo1.png";
    private $school_title="";
-   private $subtitle="a ministry of Asian Hope";
+   private $subtitle="<br/>";
    private $location="Phnom Penh, Kingdom of Cambodia";
-   private $doctitle="2013-2014 Report Card"; //use $syear to make this
+   private $doctitle="2015-2016 Report Card"; //use $syear to make this
    private $phone_number="+855-23-885-170";
    private $website="asianhopeschool.org";
 
@@ -274,7 +274,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
             }
 
             print("</table>");
-            print("<table style=\"width: 100%; position: relative; left:-35px;\"><tr><td>");$this->printGradeTable(1);print("</td>");
+            print("<table style=\"width: 100%; position: relative; left:-35px; top:-35px;\"><tr><td>");$this->printGradeTable(1);print("</td>");
             print("<td>");$this->printGradeTable(2);print("</td></tr></table>");
          print("</div></div>");
 
@@ -429,7 +429,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
       }
       else{
          print("
-         <tr><td colspan = \"5\" class = \"sectiontitle\" width=80%>".$row['text']."<br>".$alt_lang['text']."</td></tr>
+         <tr><td colspan = \"5\" class = \"sectiontitle\" width=80%>".$row['text']."&nbsp;".$alt_lang['text']."</td></tr>
          ");
       }
    }
@@ -475,7 +475,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
     function printTitle(){
       ?>
 
-      <p class="logo"><img style = "height:3.5cm" src = "<?php print $this->logo;?>"></p>
+      <p class="logo"><img style = "height:3.0cm" src = "<?php print $this->logo;?>"></p>
       <p class="school_title"><?php print $this->school_title;?></p>
       <p class="subtitle"><?php print $this->subtitle;?></p>
       <p class="location"><?php print $this->location;?></p>

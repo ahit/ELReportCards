@@ -12,10 +12,12 @@ class ReportCard{
 
   //using $school_id we'll pull the following data
    private $logo="img/LISLogo.png";
-   private $school_title="Logos International School";
-   private $subtitle="a ministry of Asian Hope";
+#   private $school_title="Logos International School";
+   private $school_title="";
+   private $subtitle="";
+   #private $subtitle="a ministry of Asian Hope";
    private $location="Phnom Penh, Kingdom of Cambodia";
-   private $doctitle="2013-2014 Report Card"; //use $syear to make this
+   private $doctitle="2016-2017 Report Card"; //use $syear to make this
    private $phone_number="017-473-515";
    private $website="logoscambodia.org";
 
@@ -62,6 +64,8 @@ class ReportCard{
    private $grade_schema; //eventual array of grade values and their ids.
    private $grade_schema_id; //an array of a few elements linking to schema ids in reportcard_grades
 
+   private $a_z_levels; //an array of a_z reading levels.
+
    private $language_id;
    private $alt_language_id;
 
@@ -75,7 +79,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
       $this->teacher_kh_id=$teacher_kh_id;
       $this->date = date("d M Y",time());
 
-      $this->language_id=6; //Q3 English
+      $this->language_id=6; //Q4 English
       $this->alt_language_id=0; //none
 
       $dbh = $this->connectELDB();
@@ -107,13 +111,13 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
             }
         }
       }
-      
+
       //generate actual student name
       if($sid!=null){
 	 $query = $sdbh->prepare("SELECT first_name, last_name, common_name from students where student_id = '$sid'");
          $query->execute();
          $val = $query->fetch();
-         $this->sname = $val['last_name'].", ".$val['first_name'];      
+         $this->sname = $val['last_name'].", ".$val['first_name'];
                 if(isset($val['common_name'])) $this->sname.=" '".$val['common_name']."'";
       }
       else $this->sname = "Please Select a Student";
@@ -149,6 +153,34 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
       elseif($this->COLUMNS == 3){
          $this->grade_schema = $this->schema_3;
       }
+      $this->a_z_levels = array(
+                          'a-z-aa'=>'aa',
+                          'a-z-A'=>'A',
+                          'a-z-B'=>'B',
+                          'a-z-C'=>'C',
+                          'a-z-D'=>'D',
+                          'a-z-E'=>'E',
+                          'a-z-F'=>'F',
+                          'a-z-G'=>'G',
+                          'a-z-H'=>'H',
+                          'a-z-I'=>'I',
+                          'a-z-J'=>'J',
+                          'a-z-K'=>'K',
+                          'a-z-L'=>'L',
+                          'a-z-M'=>'M',
+                          'a-z-N'=>'N',
+                          'a-z-O'=>'O',
+                          'a-z-P'=>'P',
+                          'a-z-Q'=>'Q',
+                          'a-z-R'=>'R',
+                          'a-z-S'=>'S',
+                          'a-z-T'=>'T',
+                          'a-z-U'=>'U',
+                          'a-z-V'=>'V',
+                          'a-z-W'=>'W',
+                          'a-z-X'=>'X',
+                          'a-z-Y'=>'Y',
+                          'a-z-Z'=>'Z');
       //where do s1 and s2 begin? (will have to re-evaluate for a Logos version where we go by quarter(?))
       $query = $sdbh->prepare("SELECT * FROM marking_periods where school_id=$school_id AND syear = $syear AND parent_id >0");
       $query->execute();
@@ -199,7 +231,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 
          $sdays[$short_name] = $res['count'];
 
-        //that is, don't show attendance too far in advance 
+        //that is, don't show attendance too far in advance
 	if(strtotime("+6 Weeks")>=strtotime($edate)){
 
          /*
@@ -263,7 +295,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
                   print("</table>"); //these breaks move the left table up in line with the right, may have to change
 
                   //this is Faith's fault! We'll have to figure out a way to store these in the DB and pull them over.
-                  print("</div><div id=\"A5\" class=\"right\"><table border=1 style=\"width:100%;margin:0px;\">");
+                  print("</div><div id=\"A5\" class=\"right\"><table border=1 style=\"width:100%;margin:0px 0px -30px 0px;\">");
                   $this->printHeader();
                }
 
@@ -376,7 +408,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
       $text_q->execute();
       $alt_lang=$text_q->fetch();
 
-      if($row['is_graded']){
+      if($row['is_graded'] >= 1){
          //pull the grades from the DB
          $sql = "SELECT * from el_grades WHERE template_id = '$template_id' AND student_id = '$sid' AND topic_id ='$topic_id'";
          $query = $dbh->prepare($sql);
@@ -410,15 +442,29 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
             }
 
          }
-         print("<tr><td align=\"right\" width=80% class = \"rowtitle\">".$row['text']."<br>".$alt_lang['text']."</td>
+        if($row['is_graded']==1){
+           print("<tr><td align=\"right\" width=80% class = \"rowtitle\">".$row['text']."<br>".$alt_lang['text']."</td>
 
-               <td align = \"center\"  width=5% class=\"editGrade\" id=\"F1".$row['topic_id']."\">".$this->grade_schema[$f1]."</td>
-               <td align = \"center\"  width=5% class=\"editGrade\" class=\"editGrade\" id=\"F2".$row['topic_id']."\">".$this->grade_schema[$f2]."</td>
-               <td align = \"center\"  width=5% class=\"editGrade\"class=\"editGrade\" id=\"F3".$row['topic_id']."\">".$this->grade_schema[$f3]."</td>"
-         );
-         if($this->COLUMNS == 4)
-            print("<td align = \"center\" width=5% class=\"editGrade\"class=\"editGrade\" id=\"F4".$row['topic_id']."\">".$this->grade_schema[$f4]."</td>"
-         );
+                 <td align = \"center\"  width=5% class=\"editGrade\" id=\"F1".$row['topic_id']."\">".$this->grade_schema[$f1]."</td>
+                 <td align = \"center\"  width=5% class=\"editGrade\" class=\"editGrade\" id=\"F2".$row['topic_id']."\">".$this->grade_schema[$f2]."</td>
+                 <td align = \"center\"  width=5% class=\"editGrade\"class=\"editGrade\" id=\"F3".$row['topic_id']."\">".$this->grade_schema[$f3]."</td>"
+           );
+           if($this->COLUMNS == 4)
+              print("<td align = \"center\" width=5% class=\"editGrade\"class=\"editGrade\" id=\"F4".$row['topic_id']."\">".$this->grade_schema[$f4]."</td>"
+           );
+        }
+        else if($row['is_graded']==2){
+          print("<tr><td align=\"right\" width=80% class = \"rowtitle\">".$row['text']."<br>".$alt_lang['text']."</td>
+
+                <td align = \"center\"  width=5% class=\"editReadingLevel\" id=\"F1".$row['topic_id']."\">".$this->a_z_levels[$f1]."</td>
+                <td align = \"center\"  width=5% class=\"editReadingLevel\" class=\"editGrade\" id=\"F2".$row['topic_id']."\">".$this->a_z_levels[$f2]."</td>
+                <td align = \"center\"  width=5% class=\"editReadingLevel\"class=\"editGrade\" id=\"F3".$row['topic_id']."\">".$this->a_z_levels[$f3]."</td>"
+          );
+          if($this->COLUMNS == 4)
+             print("<td align = \"center\" width=5% class=\"editReadingLevel\"class=\"editGrade\" id=\"F4".$row['topic_id']."\">".$this->a_z_levels[$f4]."</td>"
+          );
+
+        }
 
       }
       else{
@@ -469,7 +515,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
     function printTitle(){
       ?>
 
-      <p class="logo"><img style = "height:3.5cm" src = "<?php print $this->logo;?>"></p>
+      <p class="logo"><img style = "height:7.5cm; margin-bottom:2mm;" src = "<?php print $this->logo;?>"></p>
       <p class="school_title"><?php print $this->school_title;?></p>
       <p class="subtitle"><?php print $this->subtitle;?></p>
       <p class="location"><?php print $this->location;?></p>
@@ -574,7 +620,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
          $count = $res['count'];
       }
 
-      $sql = "SELECT count(*) as count from template_fields WHERE template_id = '$template_id' AND is_graded = 1 and language_id='$language_id'";
+      $sql = "SELECT count(*) as count from template_fields WHERE template_id = '$template_id' AND is_graded >= 1 and language_id='$language_id'";
       $query = $dbh->prepare($sql);
       $query->execute();
       $res = $query->fetch();
@@ -606,7 +652,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
         $title = $tq->fetch();
         $title = $title['title'];
 
-	
+
 
 	//slightly naive, but the nature of the table should guarantee no colissions.
 	foreach($res as $val){
@@ -614,14 +660,14 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 		$ret[$key]=$val['title'];
 	}
       }
-	
-	//include 'no value' key	
+
+	//include 'no value' key
 	$ret['.']=".";
 
 	return $ret;
     }
 
-   //prints out the grades, comments and title for the row number given 
+   //prints out the grades, comments and title for the row number given
     function printGradeTable($row){
       $sdbh = $this->connectOpenSIS();
       $dbh = $this->connectELDB();

@@ -1,7 +1,7 @@
 <?php
 	session_start();
 	//hacky hack to make the percentages show up right.
-	$mp_id = .5;
+	$mp_id = .25;
 
 	include("ReportCard.php");
 
@@ -12,7 +12,7 @@
 		$school_id = $_REQUEST['school_id'];
 
 	if(!isset($_REQUEST['syear']))
-		$syear = 2013;
+		$syear = 2016;
 	else
 		$syear = $_REQUEST['syear'];
 
@@ -84,6 +84,13 @@
 			     onblur : 'submit',
 			     //submit : 'OK'
 			 });
+			 $('.editReadingLevel').editable('save.php', {
+					data   : "{'a-z-aa': 'aa','a-z-A': 'A','a-z-B': 'B','a-z-C': 'C','a-z-D': 'D','a-z-E': 'E','a-z-F': 'F','a-z-G': 'G','a-z-H': 'H','a-z-I': 'I','a-z-J': 'J','a-z-K': 'K','a-z-L': 'L','a-z-M': 'M','a-z-N': 'N','a-z-o': 'o','a-z-P': 'P','a-z-Q': 'Q','a-z-R': 'R','a-z-S': 'S','a-z-T': 'T','a-z-U': 'U','a-z-V': 'V','a-z-W': 'W','a-z-X': 'X','a-z-Y': 'Y','a-z-Z': 'Z','a-z-.': '.'}",
+					type   : 'select',
+				onblur : 'submit',
+					//submit : 'OK'
+
+			});
 		     $('.commentblock').editable('save.php', {
 		         type      : 'textarea',
 		         //cancel    : 'Cancel',

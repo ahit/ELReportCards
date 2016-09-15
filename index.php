@@ -6,7 +6,7 @@ $_SESSION = Array(); //make sure everything is gone!
 
 //get it all set up again
 $school_id = 1;
-$syear = 2013;
+$syear = 2016;
 
 $_SESSION['school_id'] = $school_id;
 $_SESSION['syear'] = $syear;

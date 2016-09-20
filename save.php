@@ -2,6 +2,7 @@
 session_start();
 
 $template_id = $_SESSION['template_id'];
+$grade_schema = $_SESSION['gradeschema'];
 
 $a_z_levels = array(
 										'a-z-aa'=>'aa',
@@ -31,7 +32,7 @@ $a_z_levels = array(
 										'a-z-X'=>'X',
 										'a-z-Y'=>'Y',
 										'a-z-Z'=>'Z');
-$gradeschema = array_merge($_SESSION['gradeschema'],$a_z_levels);
+$gradeschema = $grade_schema+$a_z_levels;
 
 //hack to let the list be alphabetized.
 $collate = explode(".",$_SESSION['sid']);

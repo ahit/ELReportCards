@@ -6,7 +6,7 @@ $_SESSION = Array(); //make sure everything is gone!
 
 //get it all set up again
 $school_id = 2;
-$syear = 2014;
+$syear = 2015;
 
 $_SESSION['school_id'] = $school_id;
 $_SESSION['syear'] = $syear;
@@ -103,6 +103,13 @@ foreach($teachers_kh_result as $val){
 
 			<input type="submit" value="Submit">
 		</form>
+ 	<p><em>updated 4 Nov 2014</em>
+		<ul>
+			<li>allowing for teachers with multiple homerooms</li>
+			<li>getting school year more intelligently</li>
+		</ul>
+	</p>
+
  	<p><em>updated 28 Feb 2014</em>
 		<ul>
 			<li>updated queries to match current version of OpenSIS (5.3)</li>

@@ -598,7 +598,9 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
     	$q->execute();
     	$res = $q->fetchAll();
 
-  	$tq = $sdbh->prepare("SELECT title FROM report_card_grade_scales WHERE id=$schema_id");
+  	$tq = $sdbh->prepare("
+	SELECT title FROM report_card_grade_scales WHERE id=$schema_id
+		");
         $tq->execute();
         $title = $tq->fetch();
         $title = $title['title'];
@@ -633,7 +635,10 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
       $q->execute();
       $res = $q->fetchAll();
 
-      $tq = $sdbh->prepare("SELECT title FROM report_card_grade_scales WHERE id=$schema_id");
+      $tq = $sdbh->prepare("SELECT title FROM report_card_grade_scales WHERE id=$schema_id and 
+(
+    select count(*) from report_card_grades where grade_scale_id=$schema_id and comment NOT LIKE ''
+) > 0");
       $tq->execute();
       $title = $tq->fetch();
       $title = $title['title'];

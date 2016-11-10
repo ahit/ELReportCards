@@ -6,7 +6,7 @@ $_SESSION = Array(); //make sure everything is gone!
 
 //get it all set up again
 $school_id = 2;
-$syear = 2015;
+$syear = 2016;
 
 $_SESSION['school_id'] = $school_id;
 $_SESSION['syear'] = $syear;
@@ -102,7 +102,16 @@ foreach($teachers_kh_result as $val){
 
 
 			<input type="submit" value="Submit">
+
 		</form>
+	<p><em>updated 9 Nov 2016</em>
+		<ul>
+			<li>general bugixes</li>
+			<li>allowing for more complex standards</li>
+		</ul>
+	</p>
+
+
  	<p><em>updated 4 Nov 2014</em>
 		<ul>
 			<li>allowing for teachers with multiple homerooms</li>

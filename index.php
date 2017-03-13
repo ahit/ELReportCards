@@ -43,7 +43,14 @@ else{
     #$query = $sdbh->prepare("SELECT profile from staff where username='".$_SESSION['username']."'");
     
     $query->execute();
-    $authenticated_user = $query->fetchAll(PDO::FETCH_ASSOC);
+    if(!(isset($_SESSION['authenticated_user']))){
+       $authenticated_user = $query->fetchAll(PDO::FETCH_ASSOC);
+       $_SESSION['authenticated_user'] = $authenticated_user;
+    }
+
+    else{
+       $authenticated_user = $_SESSION['authenticated_user'];
+    }
    
     //if they have no permissions, figure out why
     if(!count($authenticated_user)){

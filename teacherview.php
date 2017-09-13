@@ -1,7 +1,7 @@
 <?php
 	session_start();
 	//hacky hack to make the percentages show up right.
-	$mp_id = .25;
+	$mp_id = 1;
 
 	include("ReportCard.php");
 
@@ -12,7 +12,7 @@
 		$school_id = $_REQUEST['school_id'];
 
 	if(!isset($_REQUEST['syear']))
-		$syear = 2016;
+		$syear = 2017;
 	else
 		$syear = $_REQUEST['syear'];
 

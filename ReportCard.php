@@ -83,7 +83,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
       $this->alt_language_id=0; //none
 
       $dbh = $this->connectELDB();
-      $sdbh =$this->connectOpenSIS();
+      $sdbh =$this->connectRosarioSIS();
 
       // Good stuff starts here!
 
@@ -114,11 +114,10 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 
       //generate actual student name
       if($sid!=null){
-	 $query = $sdbh->prepare("SELECT first_name, last_name, common_name from students where student_id = '$sid'");
+	 $query = $sdbh->prepare("SELECT first_name, last_name from students where student_id = '$sid'");
          $query->execute();
          $val = $query->fetch();
          $this->sname = $val['last_name'].", ".$val['first_name'];
-                if(isset($val['common_name'])) $this->sname.=" '".$val['common_name']."'";
       }
       else $this->sname = "Please Select a Student";
 
@@ -194,26 +193,30 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
          $short_name = $val['short_name'];
 
          //get total number of days per marking period from attendance calendar (all the way to the end of the year)
-         $q = $sdbh->prepare("SELECT COUNT(*) as count from attendance_calendar where syear=$syear AND school_id=$school_id
-            AND school_date>='".$sdate."' AND school_date<='".$edate."'");
+	 $sql = "SELECT COUNT(*) as count from attendance_calendar where syear=$syear AND school_id=$school_id
+            AND school_date>='".$sdate."' AND school_date<='".$edate."';";
+	 #print $sql;
+         $q = $sdbh->prepare($sql);
          $q->execute();
          $res = $q->fetch();
 
          //get total number of days present for selected student by
-         $qda = $sdbh->prepare("
+	 $sql = "
                SELECT count(attendance_period.school_date) as count from attendance_period,
-               (SELECT id from attendance_codes where syear=$syear AND school_id =$school_id AND title LIKE \"present\")
+               (SELECT id from attendance_codes where syear=$syear AND school_id =$school_id AND title LIKE 'Present')
                as present_id
                WHERE
                attendance_period.attendance_code = present_id.id AND student_id = $sid AND school_date>='"
-               .$sdate."' AND school_date<='".$edate."'");
+               .$sdate."' AND school_date<='".$edate."';";
+         #print $sql;
+         $qda = $sdbh->prepare($sql);
          $qda->execute();
          $dares = $qda->fetch();
 
          //get total number of days tardy
          $qdt = $sdbh->prepare("
                SELECT count(attendance_period.school_date) as count from attendance_period,
-               (SELECT id from attendance_codes where syear=$syear AND school_id =$school_id AND title LIKE \"late\")
+               (SELECT id from attendance_codes where syear=$syear AND school_id =$school_id AND title LIKE 'Late')
                as late_id
                WHERE
                attendance_period.attendance_code = late_id.id AND student_id = $sid AND school_date>='"
@@ -238,6 +241,8 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
           * days absent are the total days - days present - days tardy
           * (that is: all attendance codes that aren't 'present' or 'late')
           */
+	 #print($res['count'] +"-"+ $dares['count'] +"-"+ $dtres['count'] +"-"+ $dures['count']);
+
          $da[$short_name] = $res['count'] - $dares['count'] - $dtres['count'] - $dures['count'];
          if($da[$short_name]<0) $da[$short_name]=0;
 
@@ -266,7 +271,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
     */
    function toHTML(){
       $dbh = $this->connectELDB();
-      $sdbh = $this->connectOpenSIS();
+      $sdbh = $this->connectRosarioSIS();
 
      ?>
     <div id="A4">
@@ -315,14 +320,15 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
    *****************************/
    //who is enrolled? returns an array with the currently selected student marked as such
    function getEnrolledStudents(){
-      $sdbh = $this->connectOpenSIS();
+      $sdbh = $this->connectRosarioSIS();
       $syear = $this->syear;
       $grade = $this->grade;
       $sname = $this->sname;
       $teacher_id = $this->teacher_id;
 
       //grab student names to populate list - magic number school
-      $query = $sdbh->prepare("SELECT
+      $sql = "
+            SELECT
             enrolled_students.sid,
             enrolled_students.fname,
             enrolled_students.sname,
@@ -331,13 +337,13 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
             FROM
 
             (SELECT students.first_name as fname, students.last_name as sname,
-             students.student_id as sid, students.birthdate as DOB,students.is_disable,
+             students.student_id as sid, 
              schedule.course_period_id as course_period_id
              FROM students, schedule
              WHERE
              schedule.student_id = students.student_id AND schedule.syear = $this->syear AND schedule.school_id=$this->school_id
-             AND students.is_disable IS NULL AND (schedule.end_date IS NULL
-                OR schedule.end_date>'".date('Y-m-d')."'))
+             AND (schedule.end_date IS NULL
+                OR schedule.end_date>current_date))
              as enrolled_students,
 
             (SELECT course_title, course_period_id FROM course_details WHERE teacher_id = $this->teacher_id) as course
@@ -346,7 +352,9 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
             WHERE
             enrolled_students.course_period_id = course.course_period_id
 
-            ORDER BY sname ASC");
+            ORDER BY sname ASC
+      ";
+      $query = $sdbh->prepare($sql);
 
 
             $query->execute();
@@ -642,7 +650,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 
      foreach($schemas as $schema){
 	$grade_scale_id = $schema['reportcard_grade_scale_id'];
-	$sdbh = $this->connectOpenSIS();
+	$sdbh = $this->connectRosarioSIS();
     	$q = $sdbh->prepare("SELECT title, id FROM report_card_grades WHERE grade_scale_id=$grade_scale_id order by grade_scale_id asc");
     	$q->execute();
     	$res = $q->fetchAll();
@@ -669,7 +677,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 
    //prints out the grades, comments and title for the row number given
     function printGradeTable($row){
-      $sdbh = $this->connectOpenSIS();
+      $sdbh = $this->connectRosarioSIS();
       $dbh = $this->connectELDB();
       $template_id=$this->template_id;
 
@@ -708,15 +716,15 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 
    }
    //these are terrible.
-   private function connectOpenSIS(){
+   private function connectRosarioSIS(){
       include("data.php");
       $dsn = $DatabaseType.":host=".$DatabaseServer.";dbname=".$DatabaseName;
       return(new PDO($dsn, "$DatabaseUsername", "$DatabasePassword"));
    }
    private function connectELDB(){
       include("data.php");
-      $dsn = $DatabaseType.":host=".$DatabaseServer.";dbname=".$ELDatabaseName;
-      $dbh = new PDO($dsn, "$DatabaseUsername", "$DatabasePassword");
+      $dsn = $ELDatabaseType.":host=".$ELDatabaseServer.";dbname=".$ELDatabaseName;
+      $dbh = new PDO($dsn, "$ELDatabaseUsername", "$ELDatabasePassword");
       $dbh->query('SET NAMES utf8');
       return($dbh);
    }

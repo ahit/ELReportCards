@@ -29,15 +29,17 @@ else{
 
     //connect to DB
     include("data.php");
-    $dsn = $DatabaseType.":host=".$DatabaseServer.";dbname=".$ELDatabaseName;
-    $dbh = new PDO($dsn, "$DatabaseUsername", "$DatabasePassword");
+    include("../functions/Password.php");
+    $dsn = $ELDatabaseType.":host=".$ELDatabaseServer.";dbname=".$ELDatabaseName;
+    $dbh = new PDO($dsn, "$ELDatabaseUsername", "$ELDatabasePassword");
     $dbh->query('SET NAMES utf8');
 
     $dsn = $DatabaseType.":host=".$DatabaseServer.";dbname=".$DatabaseName;
     $sdbh = new PDO($dsn, "$DatabaseUsername", "$DatabasePassword");
 
     //select permission for user
-    $query = $sdbh->prepare("SELECT profile from staff where username='".$_SESSION['username']."' and password=MD5('".$_POST['password']."') and is_disable is NULL");
+    $sql = "SELECT profile,password from staff where username='".$_SESSION['username']."' and failed_login<=3";
+    $query = $sdbh->prepare($sql);
     
     //disable password protection for testing - naughty!
     #$query = $sdbh->prepare("SELECT profile from staff where username='".$_SESSION['username']."'");
@@ -45,46 +47,48 @@ else{
     $query->execute();
     if(!(isset($_SESSION['authenticated_user']))){
        $authenticated_user = $query->fetchAll(PDO::FETCH_ASSOC);
-       $_SESSION['authenticated_user'] = $authenticated_user;
+       $crypted = $authenticated_user[0]['password'];
+       $plain = $_POST['password'];
+       if(match_password($crypted, $plain)){
+            $_SESSION['authenticated_user'] = $authenticated_user;
+            //otherwise, set their permissions
+            $_SESSION['profile'] = $authenticated_user[0]['profile'];
+       } 
+       else{
+            $_SESSION['authenticated_user'] = null;
+            //disabled or they don't exist?
+
+            $query = $sdbh->prepare("SELECT failed_login from staff where username='".$_SESSION['username']."'");
+            $query->execute();
+            $failed_user = $query->fetchAll(PDO::FETCH_ASSOC);
+
+             //if there is a user with that username, set failed log in and disable user
+             if(count($failed_user)){
+                 //increment failure count
+                 $query = $sdbh->prepare("UPDATE staff set failed_login=".($failed_user[0]['failed_login']+1)." WHERE username='".$_SESSION['username']."'");
+                 $query->execute();
+
+                //if post increment it is >3 disable
+                if($failed_user[0]['failed_login']>=2){
+                    $_SESSION['username'] = null;
+                    print("Account is disabled. Please see the front office staff.");
+                    die();
+                    
+                }
+                
+            }
+
+            //display error because they don't exist or they weren't disabled
+            $_SESSION['username'] = null;
+            print("Sorry - looks like that wasn't quite right. <a href='index.php'>Try again?</a>");
+            die();
+       }
     }
 
     else{
        $authenticated_user = $_SESSION['authenticated_user'];
     }
    
-    //if they have no permissions, figure out why
-    if(!count($authenticated_user)){
-        //disabled or they don't exist?
-
-        $query = $sdbh->prepare("SELECT failed_login,is_disable from staff where username='".$_SESSION['username']."'");
-        $query->execute();
-        $failed_user = $query->fetchAll(PDO::FETCH_ASSOC);
-
-        //if there is a user with that username, set failed log in and disable user
-        if(count($failed_user)){
-            //increment failure count
-            $query = $sdbh->prepare("UPDATE staff set failed_login=".($failed_user[0]['failed_login']+1)." WHERE username='".$_SESSION['username']."'");
-            $query->execute();
-
-            //if post increment it is >3 disable
-            if($failed_user[0]['failed_login']>=2){
-                $query = $sdbh->prepare("UPDATE staff set is_disable='Y' WHERE username='".$_SESSION['username']."'");
-                $query->execute();
-                $_SESSION['username'] = null;
-                print("Account is disabled. Please see the front office staff.");
-                die();
-                    
-            }
-                
-        }
-
-        //display error because they don't exist or they weren't disabled
-        $_SESSION['username'] = null;
-        print("Sorry - looks like that wasn't quite right. <a href='index.php'>Try again?</a>");
-        //die();
-    }
-    //otherwise, set their permissions
-    $_SESSION['profile'] = $authenticated_user[0]['profile'];
 
 
     $templates = array();
@@ -99,17 +103,20 @@ else{
 
     //grab staff names for list if admin
     if($_SESSION['profile'] == 'admin'){
-        $query = $sdbh->prepare("
-                SELECT pos_staff.staff_id, pos_staff.first_name, pos_staff.last_name from
+        $sql = "
+		SELECT staff_id, first_name, last_name, username from staff 
+		where 
+		   syear=(select MAX(syear) from staff) 
+		   and 
+		   current_school_id=$school_id
+		   and
+		   profile_id in (2)
+                   and
+                   username like 'lis%'
+		ORDER BY staff_id ASC
+	";
 
-                (SELECT * FROM `staff_school_relationship` WHERE syear=$syear AND school_id=$school_id) as cur_staff,
-                (SELECT staff_id, first_name, last_name from staff WHERE staff.profile_id='2' AND is_disable IS NULL) as pos_staff
-
-                WHERE
-                pos_staff.staff_id = cur_staff.staff_id
-
-                ORDER BY pos_staff.last_name ASC
-                                ");
+        $query = $sdbh->prepare($sql);
     }
     else{
         $query = $sdbh->prepare("SELECT staff_id, first_name, last_name from staff where username='".$_SESSION['username']."'");
@@ -124,26 +131,7 @@ else{
             $teachers['id'] = $val['staff_id'];
     }
 
-    $query = $sdbh->prepare("
-            SELECT pos_staff.staff_id, pos_staff.first_name, pos_staff.last_name from
-
-            (SELECT * FROM `staff_school_relationship` WHERE syear=$syear AND school_id=$school_id) as cur_staff,
-            (SELECT staff_id, first_name, last_name from staff WHERE staff.profile_id='5' AND is_disable IS NULL) as pos_staff
-
-            WHERE
-            pos_staff.staff_id = cur_staff.staff_id
-
-            ORDER BY pos_staff.last_name ASC
-                    ");
-    $query->execute();
-    $teachers_kh_result = $query->fetchAll(PDO::FETCH_ASSOC);
-    $teachers_kh = array();
-    foreach($teachers_kh_result as $val){
-            $name = $val['last_name'].", ".$val['first_name'];
-            $nicename = $val['first_name']." ".$val['last_name'];
-            $teachers_kh[$nicename] = $name;
-            $teachers_kh['id'] = $val['staff_id'];
-    }
+    
     ?>
     <html>
             <body>

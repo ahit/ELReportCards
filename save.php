@@ -13,8 +13,8 @@ $value = $_REQUEST['value'];
 
 //blahrgh
 include("data.php");
-$dsn = $DatabaseType.":host=".$DatabaseServer.";dbname=".$ELDatabaseName;
-$dbh = new PDO($dsn, "$DatabaseUsername", "$DatabasePassword");
+$dsn = $ELDatabaseType.":host=".$ELDatabaseServer.";dbname=".$ELDatabaseName;
+$dbh = new PDO($dsn, "$ELDatabaseUsername", "$ELDatabasePassword");
 $dbh->query('SET NAMES utf8');
 
 if(strcmp($id, "sid")==0){

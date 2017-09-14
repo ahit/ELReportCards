@@ -1,13 +1,13 @@
 <?php
  //hacky hack to make the percentages show up right.
-        $mp_id= .5;
+        $mp_id= 1;
 
 	session_start();
 	include("ReportCard.php");
 	
 	//pull in the default values if we don't already have them
 	if(!isset($_SESSION['syear']))
-		$syear = 2013;
+		$syear = 2017;
 	else
 		$syear = $_SESSION['syear'];
 	

@@ -6,15 +6,15 @@ $_SESSION = Array(); //make sure everything is gone!
 
 //get it all set up again
 $school_id = 2;
-$syear = 2016;
+$syear = 2017;
 
 $_SESSION['school_id'] = $school_id;
 $_SESSION['syear'] = $syear;
 
 //connect to DB
 include("data.php");
-$dsn = $DatabaseType.":host=".$DatabaseServer.";dbname=".$ELDatabaseName;
-$dbh = new PDO($dsn, "$DatabaseUsername", "$DatabasePassword");
+$dsn = $ELDatabaseType.":host=".$ELDatabaseServer.";dbname=".$ELDatabaseName;
+$dbh = new PDO($dsn, "$ELDatabaseUsername", "$ELDatabasePassword");
 $dbh->query('SET NAMES utf8');
 
 $dsn = $DatabaseType.":host=".$DatabaseServer.";dbname=".$DatabaseName;
@@ -31,17 +31,16 @@ foreach($templates_result as $val){
 
 
 //grab staff names for list
-$query = $sdbh->prepare("
-        SELECT pos_staff.staff_id, pos_staff.first_name, pos_staff.last_name from
-
-        (SELECT * FROM `staff_school_relationship` WHERE syear=$syear AND school_id=$school_id) as cur_staff,
-        (SELECT staff_id, first_name, last_name from staff WHERE staff.profile_id='2' AND is_disable IS NULL) as pos_staff
-
-        WHERE
-        pos_staff.staff_id = cur_staff.staff_id
-
-        ORDER BY pos_staff.last_name ASC
-                        ");
+$sql = "SELECT staff_id, first_name, last_name from staff 
+        where 
+           syear=(select MAX(syear) from staff) 
+           and 
+           current_school_id=$school_id
+           and
+           profile_id in (2)
+        ORDER BY last_name ASC
+";
+$query = $sdbh->prepare($sql);
 $query->execute();
 $teachers_result = $query->fetchAll(PDO::FETCH_ASSOC);
 $teachers = array();
@@ -52,6 +51,7 @@ foreach($teachers_result as $val){
 	$teachers['id'] = $val['staff_id'];
 }
 
+#this won't work - may need to just get Khmer teachers above
 $query = $sdbh->prepare("
         SELECT pos_staff.staff_id, pos_staff.first_name, pos_staff.last_name from
 

@@ -19,9 +19,9 @@ class ReportCard{
    private $phone_number=" 077 623 327 | 089 723 185";
    private $website="asianhopeschool.org";
 
-   private $f1title = "Grade";
+   private $f1title = "Level";
    private $f2title = "Effort";
-   private $f3title = "Grade";
+   private $f3title = "Level";
    private $f4title = "Effort";
 
    private $c1title = "English Subjects - S1";

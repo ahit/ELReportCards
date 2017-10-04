@@ -17,7 +17,7 @@ class ReportCard{
    private $subtitle="";
    #private $subtitle="a ministry of Asian Hope";
    private $location="Phnom Penh, Kingdom of Cambodia";
-   private $doctitle="2016-2017 Report Card"; //use $syear to make this
+   private $doctitle="2017-2018 Report Card"; //use $syear to make this
    private $phone_number="017-473-515";
    private $website="logoscambodia.org";
 
@@ -651,7 +651,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
      foreach($schemas as $schema){
 	$grade_scale_id = $schema['reportcard_grade_scale_id'];
 	$sdbh = $this->connectRosarioSIS();
-    	$q = $sdbh->prepare("SELECT title, id FROM report_card_grades WHERE grade_scale_id=$grade_scale_id order by grade_scale_id asc");
+    	$q = $sdbh->prepare("SELECT title, id FROM report_card_grades WHERE grade_scale_id=$grade_scale_id order by sort_order asc");
     	$q->execute();
     	$res = $q->fetchAll();
 
@@ -686,7 +686,7 @@ function __construct($syear="2013", $sid=null, $template_id="2", $teacher_id="20
 
       for($i=0;$i<$row;$i++){ $s=$gquery->fetch(); $schema_id=$s['reportcard_grade_scale_id'];}
 
-      $q = $sdbh->prepare("SELECT * FROM report_card_grades WHERE grade_scale_id=$schema_id AND comment NOT LIKE ''");
+      $q = $sdbh->prepare("SELECT * FROM report_card_grades WHERE grade_scale_id=$schema_id AND comment NOT LIKE '' order by sort_order asc");
       $q->execute();
       $res = $q->fetchAll();
 
